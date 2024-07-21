@@ -11,6 +11,14 @@
             "group": {
                 "kind": "build",
                 "isDefault": true
+            },
+            "options": {
+                "shell": {
+                    "executable": "pwsh.exe",
+                    "args": [
+                        "-NoProfile", "-NoLogo", "-Command"
+                    ]
+                }
             }
         }
     ]
