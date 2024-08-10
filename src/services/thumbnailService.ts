@@ -9,16 +9,22 @@ import { THUMBNAIL_DIRECTORY, THUMBNAIL_SIZE } from "../config/constants";
  * @param destFileName 生成するサムネイル画像の名称
  * @returns サムネイル画像の絶対パス
  */
-export function generateThumbnailFile(videoPath: string, destFileName: string) {
+export async function generateThumbnailFile(videoPath: string, destFileName: string): Promise<string> {
     ensureThumbnailDirectoryExists();
 
-    ffmpeg(videoPath).screenshots({
-        filename: destFileName,
-        count: 1,
-        folder: THUMBNAIL_DIRECTORY,
-        size: THUMBNAIL_SIZE,
+    return new Promise<string>((resolve, reject) => {
+        ffmpeg(videoPath)
+            .screenshots({
+                filename: destFileName,
+                count: 1,
+                folder: THUMBNAIL_DIRECTORY,
+                size: THUMBNAIL_SIZE,
+            })
+            .on("end", () => {
+                resolve(path.join(THUMBNAIL_DIRECTORY, destFileName));
+            })
+            .on("error", reject);
     });
-    return path.join(THUMBNAIL_DIRECTORY, destFileName);
 }
 
 function ensureThumbnailDirectoryExists() {
