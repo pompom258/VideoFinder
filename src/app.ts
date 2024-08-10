@@ -27,7 +27,7 @@ app.get("/", (req, res) => {
 
         res.send(html);
     } catch (err) {
-        const msg = "Error reading directory.";
+        const msg = `Error: ${err}`;
 
         console.error(msg, err);
         res.status(500).send(msg);
