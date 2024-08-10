@@ -20,6 +20,19 @@
                     ]
                 }
             }
+        },
+        {
+            "label": "clean",
+            "type": "shell",
+            "command": "if (Test-Path ${workspaceFolder}/public) { Remove-Item ${workspaceFolder}/public -Recurse -Force }",
+            "options": {
+                "shell": {
+                    "executable": "pwsh.exe",
+                    "args": [
+                        "-NoProfile", "-NoLogo", "-Command"
+                    ]
+                }
+            }
         }
     ]
 }
