@@ -23,7 +23,7 @@ router.get("/", (req, res) => {
                 return video;
             })
             .map(video => `
-                <div style="display: inline-block; margin: 10px; text-align: center;">
+                <div style="display: inline-block; margin: 10px; text-align: center;" class="video">
                     <img src="/thumbnails/${encodeURIComponent(video.thumbnailName)}" alt="${video.videoPath}" style="width: 320px; height: 240px; object-fit: contain;">
                     <p>${video.videoPath}</p>
                 </div>
