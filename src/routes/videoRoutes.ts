@@ -21,11 +21,9 @@ router.get("/", async (req, res) => {
             .map(async video => {
                 let thumbnailPath: string = "";
                 try {
-                    console.log(`サムネイル作成開始: ${video.videoPath}`);
                     thumbnailPath = await generateThumbnailFile(video.videoPath, video.thumbnailName);
-                    console.log(`サムネイル作成完了: ${thumbnailPath}`);
                 } catch (error) {
-                    console.error("サムネイル作成失敗", error);
+                    console.error("thumbnail generation error.", error);
                 }
 
                 return {

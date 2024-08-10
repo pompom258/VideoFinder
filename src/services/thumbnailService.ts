@@ -4,7 +4,7 @@ import ffmpeg from 'fluent-ffmpeg';
 import { THUMBNAIL_DIRECTORY, THUMBNAIL_SIZE } from "../config/constants";
 
 /**
- * 動画のサムネイル画像を生成する
+ * 動画のサムネイル画像を生成する。既に生成済みの場合は何もしない。
  * @param videoPath 動画ファイルのパス
  * @param destFileName 生成するサムネイル画像の名称
  * @returns サムネイル画像の絶対パス
@@ -12,7 +12,13 @@ import { THUMBNAIL_DIRECTORY, THUMBNAIL_SIZE } from "../config/constants";
 export async function generateThumbnailFile(videoPath: string, destFileName: string): Promise<string> {
     ensureThumbnailDirectoryExists();
 
+    const outPath = path.join(THUMBNAIL_DIRECTORY, destFileName);
     return new Promise<string>((resolve, reject) => {
+        if (fs.existsSync(outPath)) {
+            resolve(outPath);
+        }
+
+        console.log(`generating thumbnail for the video '${videoPath}'...`);
         ffmpeg(videoPath)
             .screenshots({
                 filename: destFileName,
@@ -20,10 +26,8 @@ export async function generateThumbnailFile(videoPath: string, destFileName: str
                 folder: THUMBNAIL_DIRECTORY,
                 size: THUMBNAIL_SIZE,
             })
-            .on("end", () => {
-                resolve(path.join(THUMBNAIL_DIRECTORY, destFileName));
-            })
-            .on("error", reject);
+            .on("end", () => resolve(outPath))
+            .on("error", (err) => reject(err));
     });
 }
 
