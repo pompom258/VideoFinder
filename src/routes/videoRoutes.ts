@@ -38,7 +38,7 @@ router.get("/", (req, res) => {
                 return `
                 <div style="display: inline-block; margin: 10px; text-align: center;" class="video">
                     <img src="${thumbnailSrc}" alt="${video.videoPath}" style="width: 320px; height: 240px; object-fit: contain;">
-                    <p>${video.videoPath}</p>
+                    <a href="file:///${video.videoPath.replace(/\\/g, "/")}">${video.videoPath}</a>
                 </div>
                 `
             });
