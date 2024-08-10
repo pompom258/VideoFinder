@@ -29,3 +29,12 @@ export function findVideoFilesRecurse(dir: string = VIDEO_DIRECTORY): string[] {
 
     return result;
 }
+
+/**
+ * ファイルの存在チェックを行う
+ * @param path 確認対象ファイルのパス
+ * @returns チェック結果
+ */
+export function isFileExists(path: string): boolean {
+    return fs.existsSync(path);
+}

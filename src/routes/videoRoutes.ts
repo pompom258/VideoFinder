@@ -1,8 +1,9 @@
 import express from 'express';
 import path from 'path';
 
-import { findVideoFilesRecurse } from "../utils/fileUtil";
+import { findVideoFilesRecurse, isFileExists } from "../utils/fileUtil";
 import { generateThumbnailFile } from '../services/thumbnailService';
+import { DEFAULT_THUMBNAIL_IMGNAME } from '../config/constants';
 
 const router = express.Router();
 
@@ -19,15 +20,28 @@ router.get("/", (req, res) => {
             })
             .map(video => {
                 console.log(`サムネイル作成開始\n対象ファイル: ${video.videoPath}\n出力サムネイルファイル名: ${video.thumbnailName}`);
-                generateThumbnailFile(video.videoPath, video.thumbnailName);
-                return video;
+                return {
+                    videoPath: video.videoPath,
+                    thumbnailName: video.thumbnailName,
+                    thumbnailPath: generateThumbnailFile(video.videoPath, video.thumbnailName)
+                }
             })
-            .map(video => `
+            .map(video => {
+                const thumbnailSrc: string = (() => {
+                    if (isFileExists(video.thumbnailPath)) {
+                        return `/thumbnails/${encodeURIComponent(video.thumbnailName)}`;
+                    } else {
+                        return `/default/${encodeURIComponent(DEFAULT_THUMBNAIL_IMGNAME)}`;
+                    }
+                })();
+
+                return `
                 <div style="display: inline-block; margin: 10px; text-align: center;" class="video">
-                    <img src="/thumbnails/${encodeURIComponent(video.thumbnailName)}" alt="${video.videoPath}" style="width: 320px; height: 240px; object-fit: contain;">
+                    <img src="${thumbnailSrc}" alt="${video.videoPath}" style="width: 320px; height: 240px; object-fit: contain;">
                     <p>${video.videoPath}</p>
                 </div>
-            `);
+                `
+            });
 
         const html = `
             <html>
