@@ -24,7 +24,7 @@
         {
             "label": "clean",
             "type": "shell",
-            "command": "if (Test-Path ${workspaceFolder}/public) { Remove-Item ${workspaceFolder}/public -Recurse -Force }",
+            "command": "if (Test-Path ${workspaceFolder}/public/thumbnails) { Remove-Item ${workspaceFolder}/public/thumbnails -Recurse -Force }",
             "options": {
                 "shell": {
                     "executable": "pwsh.exe",
