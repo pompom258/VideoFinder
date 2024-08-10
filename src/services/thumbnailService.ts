@@ -1,19 +1,20 @@
 import fs from 'fs';
-import path from 'path';
 import ffmpeg from 'fluent-ffmpeg';
 import { THUMBNAIL_DIRECTORY, THUMBNAIL_SIZE } from "../config/constants";
 
 /**
  * 動画のサムネイル画像を生成する
  * @param videoPath 動画ファイルのパス
- * @param destDir 生成先ディレクトリパス
+ * @param destFileName サムネイル画像の名称
+ * @returns サムネイル画像の名称
  */
-export function generateThumbnailFile(videoPath: string, destDir: string = THUMBNAIL_DIRECTORY) {
+export function generateThumbnailFile(videoPath: string, destFileName: string) {
     ensureThumbnailDirectoryExists();
+
     ffmpeg(videoPath).screenshots({
-        filename: `thumbnail-${path.parse(videoPath).name.replace(/ /g, "_")}.png`,
+        filename: destFileName,
         count: 1,
-        folder: destDir,
+        folder: THUMBNAIL_DIRECTORY,
         size: THUMBNAIL_SIZE,
     });
 }

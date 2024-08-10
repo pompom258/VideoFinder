@@ -2,7 +2,6 @@ import express from 'express';
 import dotenv from 'dotenv';
 
 import router from './routes/videoRoutes'
-import { generateThumbnailFile } from './services/thumbnailService';
 import { THUMBNAIL_DIRECTORY } from './config/constants';
 
 dotenv.config();
