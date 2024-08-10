@@ -9,7 +9,7 @@ import { THUMBNAIL_DIRECTORY, THUMBNAIL_SIZE } from "../config/constants";
  * @param destDir 生成先ディレクトリパス
  */
 export function generateThumbnailFile(videoPath: string, destDir: string = THUMBNAIL_DIRECTORY) {
-    createThumbnailDirectory();
+    ensureThumbnailDirectoryExists();
     ffmpeg(videoPath).screenshots({
         filename: `thumbnail-${path.parse(videoPath).name.replace(/ /g, "_")}.png`,
         count: 1,
@@ -18,7 +18,7 @@ export function generateThumbnailFile(videoPath: string, destDir: string = THUMB
     });
 }
 
-function createThumbnailDirectory() {
+function ensureThumbnailDirectoryExists() {
     if (!fs.existsSync(THUMBNAIL_DIRECTORY)) {
         fs.mkdirSync(THUMBNAIL_DIRECTORY, { recursive: true });
     }
