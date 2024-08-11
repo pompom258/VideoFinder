@@ -30,29 +30,32 @@ router.get("/", async (req, res) => {
         const html = `
             <html>
                 <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Video Gallery</title>
                     <link rel="stylesheet" href="/styles.css">
                 </head>
                 <body>
-                <h1>Video Files</h1>
+                <h1>Video Gallery</h1>
                 <div class="video-container">
-                    ${(videoList
-                        .map(video => {
-                            const thumbnailSrc: string = (() => {
-                                if (isFileExists(video.thumbnailPath)) {
-                                    return `/thumbnails/${encodeURIComponent(video.thumbnailName)}`;
-                                } else {
-                                    return `/default/${encodeURIComponent(DEFAULT_THUMBNAIL_IMGNAME)}`;
-                                }
-                            })();
+                    ${videoList.map(video => {
+                        const thumbnailSrc = isFileExists(video.thumbnailPath)
+                            ? `/thumbnails/${encodeURIComponent(video.thumbnailName)}`
+                            : `/default/${encodeURIComponent(DEFAULT_THUMBNAIL_IMGNAME)}`;
 
-                            return `
-                            <div class="video-item">
-                                <img src="${thumbnailSrc}" alt="${video.videoPath}" title="${video.videoPath}" class="video-thumbnail">
-                                <a href="file:///${video.videoPath.replace(/\\/g, "/")}">${video.videoPath}</a>
+                        return `
+                        <div class="video-item">
+                            <div class="thumbnail-container">
+                                <img src="${thumbnailSrc}" alt="${video.videoPath}" class="video-thumbnail">
                             </div>
-                            `
-                        })
-                    ).join()};
+                            <div class="video-info">
+                                <a href="file:///${video.videoPath.replace(/\\/g, "/")}" class="video-title">${path.basename(video.videoPath)}</a>
+                                <p class="video-path">${path.dirname(video.videoPath)}</p>
+                            </div>
+                        </div>
+                        `;
+                    }).join('')}
+
                 </div>
                 </body>
             </html>
