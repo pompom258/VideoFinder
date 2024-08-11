@@ -9,6 +9,8 @@ const PORT = process.env.PORT;
 
 const app = express();
 
+app.use(express.static("public"));
+
 app.use("/", router);
 app.use("/thumbnails", express.static(THUMBNAIL_DIRECTORY));
 app.use("/default", express.static(DEFAULT_DIRECTORY));

@@ -29,9 +29,12 @@ router.get("/", async (req, res) => {
 
         const html = `
             <html>
+                <head>
+                    <link rel="stylesheet" href="/styles.css">
+                </head>
                 <body>
                 <h1>Video Files</h1>
-                <div style="display: flex; flex-wrap: wrap;">
+                <div class="video-container">
                     ${(videoList
                         .map(video => {
                             const thumbnailSrc: string = (() => {
@@ -43,8 +46,8 @@ router.get("/", async (req, res) => {
                             })();
 
                             return `
-                            <div style="display: inline-block; margin: 10px; text-align: center;" class="video">
-                                <img src="${thumbnailSrc}" alt="${video.videoPath}" title="${video.videoPath}" style="width: 320px; height: 240px; object-fit: contain;">
+                            <div class="video-item">
+                                <img src="${thumbnailSrc}" alt="${video.videoPath}" title="${video.videoPath}" class="video-thumbnail">
                                 <a href="file:///${video.videoPath.replace(/\\/g, "/")}">${video.videoPath}</a>
                             </div>
                             `
