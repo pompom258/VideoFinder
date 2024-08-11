@@ -15,10 +15,12 @@ export async function generateThumbnailFile(videoPath: string, destFileName: str
     const outPath = path.join(THUMBNAIL_DIRECTORY, destFileName);
     return new Promise<string>((resolve, reject) => {
         if (fs.existsSync(outPath)) {
+            console.log(`Thumbnail for the video '${videoPath}' already exists, so generation is skipped.`);
             resolve(outPath);
+            return;
         }
 
-        console.log(`generating thumbnail for the video '${videoPath}'...`);
+        console.log(`Generating thumbnail for the video '${videoPath}'...`);
         ffmpeg(videoPath)
             .screenshots({
                 filename: destFileName,
@@ -26,8 +28,14 @@ export async function generateThumbnailFile(videoPath: string, destFileName: str
                 folder: THUMBNAIL_DIRECTORY,
                 size: THUMBNAIL_SIZE,
             })
-            .on("end", () => resolve(outPath))
-            .on("error", (err) => reject(err));
+            .on("end", () => {
+                console.log(`Thumbnail generated for the video '${videoPath}'.`);
+                resolve(outPath);
+            })
+            .on("error", (err) => {
+                console.log(`An error occurred while generating the thumbnail for the video '${videoPath}'.`);
+                reject(err);
+            });
     });
 }
 

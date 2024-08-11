@@ -19,17 +19,10 @@ router.get("/", async (req, res) => {
                 }
             })
             .map(async video => {
-                let thumbnailPath: string = "";
-                try {
-                    thumbnailPath = await generateThumbnailFile(video.videoPath, video.thumbnailName);
-                } catch (error) {
-                    console.error("thumbnail generation error.", error);
-                }
-
                 return {
                     videoPath: video.videoPath,
                     thumbnailName: video.thumbnailName,
-                    thumbnailPath: thumbnailPath
+                    thumbnailPath: await generateThumbnailFile(video.videoPath, video.thumbnailName)
                 }
             })
         );
