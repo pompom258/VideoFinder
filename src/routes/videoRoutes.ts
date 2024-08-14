@@ -51,6 +51,7 @@ router.get("/", async (req, res) => {
                                 <div class="video-item">
                                     <div class="thumbnail-container">
                                         <img src="${thumbnailSrc}" alt="${video.videoPath}" title="${video.videoName}" class="video-thumbnail">
+                                        <span class="video-duration">${video.videoDuration}</span>
                                     </div>
                                     <div class="video-info">
                                         <a href="file:///${video.videoPath.replace(/\\/g, "/")}" class="video-title">${video.videoName}</a>
