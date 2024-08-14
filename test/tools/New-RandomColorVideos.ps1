@@ -1,5 +1,7 @@
 param(
     [int]$NumberOfVideos = 5,
+    [int]$MinimumDurationInSeconds = 45,
+    [int]$MaximumDurationInSeconds = 4500,
     [string]$OutputDirectory = (Join-Path $PSScriptRoot "../../sample")
 )
 
@@ -15,7 +17,7 @@ function Get-RandomColor {
 }
 
 function Get-RandomDuration {
-    return Get-Random -Minimum 5 -Maximum 30
+    return Get-Random -Minimum $MinimumDurationInSeconds -Maximum $MaximumDurationInSeconds
 }
 
 $videos = @()

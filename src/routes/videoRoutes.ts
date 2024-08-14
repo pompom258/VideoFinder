@@ -2,8 +2,9 @@ import express from 'express';
 import path from 'path';
 
 import { findVideoFilesRecurse, isFileExists } from "../utils/fileUtil";
-import { generateThumbnailFile } from '../services/thumbnailService';
 import { DEFAULT_THUMBNAIL_IMGNAME } from '../config/constants';
+import { generateThumbnailFile } from '../services/thumbnailService';
+import { getVideoDuration } from '../services/durationService';
 
 const router = express.Router();
 
@@ -23,7 +24,8 @@ router.get("/", async (req, res) => {
                     videoName: path.basename(video.videoPath),
                     videoPath: video.videoPath,
                     thumbnailName: video.thumbnailName,
-                    thumbnailPath: await generateThumbnailFile(video.videoPath, video.thumbnailName)
+                    thumbnailPath: await generateThumbnailFile(video.videoPath, video.thumbnailName),
+                    videoDuration: await getVideoDuration(video.videoPath)
                 }
             })
         );
@@ -49,6 +51,7 @@ router.get("/", async (req, res) => {
                                 <div class="video-item">
                                     <div class="thumbnail-container">
                                         <img src="${thumbnailSrc}" alt="${video.videoPath}" title="${video.videoName}" class="video-thumbnail">
+                                        <span class="video-duration">${video.videoDuration}</span>
                                     </div>
                                     <div class="video-info">
                                         <a href="file:///${video.videoPath.replace(/\\/g, "/")}" class="video-title">${video.videoName}</a>
