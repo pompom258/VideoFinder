@@ -9,6 +9,7 @@ import { getVideoDuration } from '../services/durationService';
 const router = express.Router();
 
 router.get("/", async (req, res) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} '${req.url}' User-Agent: ${req.headers['user-agent']}`);
     try {
         const videoFiles = findVideoFilesRecurse();
 
