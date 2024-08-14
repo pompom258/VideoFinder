@@ -20,6 +20,7 @@ router.get("/", async (req, res) => {
             })
             .map(async video => {
                 return {
+                    videoName: path.basename(video.videoPath),
                     videoPath: video.videoPath,
                     thumbnailName: video.thumbnailName,
                     thumbnailPath: await generateThumbnailFile(video.videoPath, video.thumbnailName)
@@ -47,10 +48,10 @@ router.get("/", async (req, res) => {
                                 return `
                                 <div class="video-item">
                                     <div class="thumbnail-container">
-                                        <img src="${thumbnailSrc}" alt="${video.videoPath}" class="video-thumbnail">
+                                        <img src="${thumbnailSrc}" alt="${video.videoPath}" title="${video.videoName}" class="video-thumbnail">
                                     </div>
                                     <div class="video-info">
-                                        <a href="file:///${video.videoPath.replace(/\\/g, "/")}" class="video-title">${path.basename(video.videoPath)}</a>
+                                        <a href="file:///${video.videoPath.replace(/\\/g, "/")}" class="video-title">${video.videoName}</a>
                                         <p class="video-path">${path.dirname(video.videoPath)}</p>
                                     </div>
                                 </div>
