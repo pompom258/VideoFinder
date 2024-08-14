@@ -51,7 +51,9 @@ router.get("/", async (req, res) => {
                                 return `
                                 <div class="video-item">
                                     <div class="thumbnail-container">
-                                        <img src="${thumbnailSrc}" alt="${video.videoPath}" title="${video.videoName}" class="video-thumbnail">
+                                        <a href="${video.videoPath}">
+                                            <img src="${thumbnailSrc}" alt="${video.videoPath}" title="${video.videoName}" class="video-thumbnail">
+                                        </a>
                                         <span class="video-duration">${video.videoDuration}</span>
                                     </div>
                                     <div class="video-info">
