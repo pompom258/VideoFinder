@@ -42,6 +42,10 @@ router.get("/", async (req, res) => {
                 <body>
                     <div class="container">
                         <h1>Video Gallery</h1>
+                        <div class="search-container">
+                            <input type="text" id="search-input" placeholder="Search videos...">
+                            <button id="search-button">Search</button>
+                        </div>
                         <div class="video-gallery">
                             ${videoList.map(video => {
                                 const thumbnailSrc = isFileExists(video.thumbnailPath)
