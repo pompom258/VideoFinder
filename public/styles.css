@@ -16,13 +16,16 @@ h1 {
     color: #333;
 }
 
-.video-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+.video-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 20px;
 }
 
 .video-item {
+    flex-basis: calc(25% - 20px);
+    min-width: 200px;
     background-color: #fff;
     border-radius: 8px;
     overflow: hidden;
@@ -37,7 +40,7 @@ h1 {
 .thumbnail-container {
     position: relative;
     width: 100%;
-    padding-top: 56.25%; /* 16:9 アスペクト比 */
+    padding-top: 56.25%; /* 16:9 aspect ratio */
 }
 
 .video-thumbnail {
@@ -72,4 +75,23 @@ h1 {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+/* Responsive design */
+@media screen and (max-width: 600px) {
+    .video-item {
+        flex-basis: 100%;
+    }
+}
+
+@media screen and (min-width: 601px) and (max-width: 900px) {
+    .video-item {
+        flex-basis: calc(50% - 20px);
+    }
+}
+
+@media screen and (min-width: 901px) and (max-width: 1200px) {
+    .video-item {
+        flex-basis: calc(33.333% - 20px);
+    }
 }
