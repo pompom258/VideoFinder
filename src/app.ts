@@ -14,6 +14,7 @@ app.use(express.static("public"));
 app.use("/", router);
 app.use("/thumbnails", express.static(THUMBNAIL_DIRECTORY));
 app.use("/default", express.static(DEFAULT_DIRECTORY));
+app.use("/js", express.static("dist"));
 
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}.`);

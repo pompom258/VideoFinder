@@ -69,6 +69,7 @@ router.get("/", async (req, res) => {
                             }).join('')}
                         </div>
                     </div>
+                    <script src="js/events/searchEvent.js"></script>
                 </body>
             </html>
         `;
