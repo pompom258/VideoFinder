@@ -1,4 +1,5 @@
 export interface VideosApiResponse {
+    id: number;
     videoName: string;
     videoPath: string;
     thumbnailName: string;

@@ -1,5 +1,5 @@
 interface VideosTableRecord {
     id: number;
-    name: string;
+    path: string;
     durationSeconds: number
 }

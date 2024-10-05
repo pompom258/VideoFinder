@@ -1,5 +1,6 @@
 import express from 'express';
 import path from 'path';
+import { exec } from 'child_process';
 
 import { VideoStorage } from '../../model/storages/videoStorage';
 import { findVideoFilesRecurse } from '../../model/utils/fileUtil';
@@ -8,6 +9,7 @@ import { formatDuration, getVideoDuration } from '../../model/services/durationS
 import { VideosApiResponse } from '../../entities/apiResponse';
 
 const router = express.Router();
+const videoStorage = new VideoStorage();
 
 /**
  * 動画情報の一覧を返却するAPI
@@ -15,7 +17,6 @@ const router = express.Router();
 router.get("/videos", async (req, res) => {
     console.log(`[${new Date().toISOString()}] [Videos API Handler] ${req.method} '${req.url}' User-Agent: ${req.headers['user-agent']}`);
     try {
-        const videoStorage = new VideoStorage();
         videoStorage.initialize();
 
         const videoFiles: string[] = findVideoFilesRecurse();
@@ -32,6 +33,7 @@ router.get("/videos", async (req, res) => {
                 videoStorage.add(id, videoPath, videoDuration);
 
                 return {
+                    id: id,
                     videoName: path.basename(videoPath),
                     videoPath: videoPath,
                     thumbnailName: thumbnailName,
@@ -42,11 +44,35 @@ router.get("/videos", async (req, res) => {
         );
 
         videoStorage.printAll();
-        videoStorage.close();
 
         res.json(videoList);
     }
     catch (err) {
+        const msg = `Error: ${err}`;
+
+        console.error(msg, err);
+        res.status(500).json({ error: msg });
+    }
+});
+
+/**
+ * IDに対応する動画をローカルマシンの既定のアプリケーションで再生するAPI
+ */
+router.post("/play", async (req, res) => {
+    try {
+        const { videoId } = req.body;
+        const { path } = await videoStorage.get(videoId);
+
+        const command: string = `start "" "${path}"`;
+        exec(command, (err) => {
+            if (err) {
+                console.error(err);
+                res.status(500).json({ error: "Failed to execute play video command." });
+            } else {
+                res.json({ message: "Video playback started." });
+            }
+        })
+    } catch (err) {
         const msg = `Error: ${err}`;
 
         console.error(msg, err);

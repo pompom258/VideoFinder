@@ -7,7 +7,7 @@ export class VideoStorage {
     public initialize() {
         this.db.serialize(() => {
             this.db.run(`DROP TABLE IF EXISTS ${TABLE_NAME_VIDEOS}`);
-            this.db.run(`CREATE TABLE IF NOT EXISTS ${TABLE_NAME_VIDEOS}(id INTEGER PRIMARY KEY, name TEXT, durationSeconds INTEGER)`);
+            this.db.run(`CREATE TABLE IF NOT EXISTS ${TABLE_NAME_VIDEOS}(id INTEGER UNIQUE PRIMARY KEY, path TEXT, durationSeconds INTEGER)`);
         });
     }
 
@@ -15,9 +15,9 @@ export class VideoStorage {
         this.db.close();
     }
 
-    public add(id: number, name: string, durationSeconds: number) {
+    public add(id: number, path: string, durationSeconds: number) {
         this.db.serialize(() => {
-            this.db.run(`INSERT INTO ${TABLE_NAME_VIDEOS}(id, name, durationSeconds) VALUES (?, ?, ?)`, id, name, durationSeconds);
+            this.db.run(`INSERT INTO ${TABLE_NAME_VIDEOS}(id, path, durationSeconds) VALUES (?, ?, ?)`, id, path, durationSeconds);
         });
     }
 
@@ -57,7 +57,7 @@ export class VideoStorage {
 
     public printAll() {
         this.db.each(`SELECT * FROM ${TABLE_NAME_VIDEOS}`, (err, row: VideosTableRecord) => {
-            console.log(`${row.id}, ${row.name}, ${row.durationSeconds}`);
+            console.log(`${row.id}, ${row.path}, ${row.durationSeconds}`);
         });
     }
 }
