@@ -1,11 +1,11 @@
 import express from 'express';
 import path from 'path';
 
-import { findVideoFilesRecurse, isFileExists } from "../utils/fileUtil";
+import { findVideoFilesRecurse, isFileExists } from "../model/utils/fileUtil";
 import { DEFAULT_THUMBNAIL_IMGNAME } from '../config/constants';
-import { generateThumbnailFile } from '../services/thumbnailService';
-import { formatDuration, getVideoDuration } from '../services/durationService';
-import { VideoStorage } from '../videoStorage';
+import { generateThumbnailFile } from '../model/services/thumbnailService';
+import { formatDuration, getVideoDuration } from '../model/services/durationService';
+import { VideoStorage } from '../model/storages/videoStorage';
 
 interface VideoView {
     videoName: string;
