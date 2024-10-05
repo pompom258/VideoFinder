@@ -11,9 +11,7 @@ const router = express.Router();
 router.get("/", async (req, res) => {
     console.log(`[${new Date().toISOString()}] [Videos View handler] ${req.method} '${req.url}' User-Agent: ${req.headers['user-agent']}`);
     try {
-        const response = await axios.get(`http://localhost:${PORT}/api/videos`);
-
-        const videos: VideosApiResponse[] = response.data;
+        const { data: videos }: { data: VideosApiResponse[] } = await axios.get(`http://localhost:${PORT}/api/videos`);
 
         const html = `
             <html>

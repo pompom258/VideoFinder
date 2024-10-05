@@ -6,29 +6,31 @@ import { VideoStorage } from '../../model/storages/videoStorage';
 import { findVideoFilesRecurse } from '../../model/utils/fileUtil';
 import { generateThumbnailFile } from '../../model/services/thumbnailService';
 import { formatDuration, getVideoDuration } from '../../model/services/durationService';
+import { ScanApiRequest, PlayApiRequest } from '../../entities/apiRequest';
+import { ThumbnailStorage } from '../../model/storages/thumbnailStorage';
 import { VideosApiResponse } from '../../entities/apiResponse';
-import { PlayApiRequest } from '../../entities/apiRequest';
 
 const router = express.Router();
 const videoStorage = new VideoStorage();
+const thumbnailStorage = new ThumbnailStorage();
 
 /**
- * 動画情報の一覧を返却するAPI
+ * ローカルマシンの動画ファイルをスキャンしてDBに格納するAPI
  */
-router.get("/videos", async (req, res) => {
-    console.log(`[${new Date().toISOString()}] [Videos API Handler] ${req.method} '${req.url}' User-Agent: ${req.headers['user-agent']}`);
+router.post("/scan", async (req: ScanApiRequest, res) => {
+    console.log(`[${new Date().toISOString()}] [Scan API Handler] ${req.method} '${req.url}' User-Agent: ${req.headers['user-agent']}`);
     try {
+        const { dirPath } = req.body;
+
         videoStorage.initialize();
+        thumbnailStorage.initialize();
 
-        const videoFiles: string[] = findVideoFilesRecurse();
+        const videoFiles: string[] = dirPath ? findVideoFilesRecurse(dirPath) : findVideoFilesRecurse();
 
-        const videoList: VideosApiResponse[] = [];
         for (let i = 0; i < videoFiles.length; i++) {
-            const videoPath = videoFiles[i];
-
+            const videoPath: string = videoFiles[i];
             const id: number = i + 1;
-
-            const thumbnailName = `${id}.png`
+            const thumbnailName: string = `${id}.png`
 
             let thumbnailPath: string | undefined = undefined;
             try {
@@ -46,22 +48,42 @@ router.get("/videos", async (req, res) => {
             }
 
             videoStorage.add(id, videoPath, videoDuration);
-
-            videoList.push({
-                id: id,
-                videoName: path.basename(videoPath),
-                videoPath: videoPath,
-                thumbnailName: thumbnailPath ? thumbnailName : "",
-                thumbnailPath: thumbnailPath ?? "",
-                videoDuration: formatDuration(videoDuration),
-                isThumbnailGenerationSucceed: thumbnailPath !== undefined
-            });
+            if (thumbnailPath) {
+                thumbnailStorage.add(id, thumbnailPath);
+            }
         }
 
-        res.json(videoList);
+        res.json({ message: "All videos has been scanned." });
+    } catch (err) {
+        console.error(`A fatal error occurred while executing Scan API: ${err}`);
+        res.status(500).json({ error: err });
+    }
+});
+
+/**
+ * DBから動画情報の一覧を返却するAPI
+ */
+router.get("/videos", async (req, res) => {
+    console.log(`[${new Date().toISOString()}] [Videos API Handler] ${req.method} '${req.url}' User-Agent: ${req.headers['user-agent']}`);
+    try {
+        const videos: VideosTableRecord[] = await videoStorage.getAll();
+        const thumbnails: ThumbnailsTableRecord[] = await thumbnailStorage.getAll();
+
+        res.json(videos.map((video: VideosTableRecord): VideosApiResponse => {
+            const thumbnail: ThumbnailsTableRecord = thumbnails.filter(thumbnail => thumbnail.id === video.id)[0];
+            return {
+                id: video.id,
+                videoName: path.basename(video.path),
+                videoPath: video.path,
+                thumbnailName: thumbnail ? path.basename(thumbnail.path) : "",
+                thumbnailPath: thumbnail?.path ?? "",
+                videoDuration: formatDuration(video.durationSeconds),
+                isThumbnailGenerationSucceed: thumbnail !== undefined
+            }
+        }));
     }
     catch (err) {
-        console.log(`A fatal error occurred while executing Videos API: ${err}`);
+        console.error(`A fatal error occurred while executing Videos API: ${err}`);
         res.status(500).json({ error: err });
     }
 });
@@ -85,6 +107,7 @@ router.get("/play", async (req: PlayApiRequest, res) => {
             }
         });
     } catch (err) {
+        console.error(`A fatal error occurred while executing Play API: ${err}`);
         res.status(500).json({ error: err });
     }
 });

@@ -9,3 +9,6 @@ export const DEFAULT_THUMBNAIL_IMGNAME = "thumbnail_default.png";
 
 export const TABLE_NAME_VIDEOS = "videos";
 export const TABLE_PATH_VIDEOS = "./videos.db";
+
+export const TABLE_NAME_THUMBNAILS = "thumbnails";
+export const TABLE_PATH_THUMBNAILS = "./thumbnails.db";

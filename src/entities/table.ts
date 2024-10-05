@@ -3,3 +3,8 @@ interface VideosTableRecord {
     path: string;
     durationSeconds: number
 }
+
+interface ThumbnailsTableRecord {
+    id: number;
+    path: string;
+}
