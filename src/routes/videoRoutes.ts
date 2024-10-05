@@ -1,32 +1,47 @@
 import express from 'express';
 import path from 'path';
 
-import { findVideoFilesRecurse, isFileExists } from "../utils/fileUtil";
+import { findVideoFilesRecurse, isFileExists } from "../model/utils/fileUtil";
 import { DEFAULT_THUMBNAIL_IMGNAME } from '../config/constants';
-import { generateThumbnailFile } from '../services/thumbnailService';
-import { getVideoDuration } from '../services/durationService';
+import { generateThumbnailFile } from '../model/services/thumbnailService';
+import { formatDuration, getVideoDuration } from '../model/services/durationService';
+import { VideoStorage } from '../model/storages/videoStorage';
+
+interface VideoView {
+    videoName: string;
+    videoPath: string;
+    thumbnailName: string;
+    thumbnailPath: string;
+    videoDuration: string;
+}
 
 const router = express.Router();
 
 router.get("/", async (req, res) => {
     console.log(`[${new Date().toISOString()}] ${req.method} '${req.url}' User-Agent: ${req.headers['user-agent']}`);
     try {
-        const videoFiles = findVideoFilesRecurse();
+        const videoStorage = new VideoStorage();
+        videoStorage.initialize();
 
-        const videoList = await Promise.all(videoFiles
-            .map(videoPath => {
+        const videoFiles: string[] = findVideoFilesRecurse();
+
+        const videoList: VideoView[] = await Promise.all(videoFiles
+            .map(async (videoPath, index) => {
+                const id: number = index + 1;
+
+                const thumbnailName = `${id}.png`
+                const thumbnailPath = await generateThumbnailFile(videoPath, thumbnailName);
+
+                const videoDuration = await getVideoDuration(videoPath);
+
+                videoStorage.add(id, videoPath, videoDuration);
+
                 return {
+                    videoName: path.basename(videoPath),
                     videoPath: videoPath,
-                    thumbnailName: `thumbnail-${path.parse(videoPath).name.replace(/ /g, "_")}.png`
-                }
-            })
-            .map(async video => {
-                return {
-                    videoName: path.basename(video.videoPath),
-                    videoPath: video.videoPath,
-                    thumbnailName: video.thumbnailName,
-                    thumbnailPath: await generateThumbnailFile(video.videoPath, video.thumbnailName),
-                    videoDuration: await getVideoDuration(video.videoPath)
+                    thumbnailName: thumbnailName,
+                    thumbnailPath: thumbnailPath,
+                    videoDuration: formatDuration(videoDuration)
                 }
             })
         );
@@ -74,6 +89,8 @@ router.get("/", async (req, res) => {
             </html>
         `;
 
+        videoStorage.printAll();
+        videoStorage.close();
         res.send(html);
     } catch (err) {
         const msg = `Error: ${err}`;

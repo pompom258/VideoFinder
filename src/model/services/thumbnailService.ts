@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import ffmpeg from 'fluent-ffmpeg';
-import { THUMBNAIL_DIRECTORY, THUMBNAIL_SIZE } from "../config/constants";
+import { THUMBNAIL_DIRECTORY, THUMBNAIL_SIZE } from "../../config/constants";
 
 /**
  * 動画のサムネイル画像を生成する。既に生成済みの場合は何もしない。
@@ -29,7 +29,7 @@ export async function generateThumbnailFile(videoPath: string, destFileName: str
                 size: THUMBNAIL_SIZE,
             })
             .on("end", () => {
-                console.log(`Thumbnail generated for the video '${videoPath}'.`);
+                console.log(`Thumbnail generated for the video '${videoPath}' as ${destFileName}.`);
                 resolve(outPath);
             })
             .on("error", (err) => {
