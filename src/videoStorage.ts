@@ -21,13 +21,13 @@ export class VideoStorage {
         this.db.close();
     }
 
-    public insert(id: number, name: string, durationSeconds: number) {
+    public add(id: number, name: string, durationSeconds: number) {
         this.db.serialize(() => {
             this.db.run(`INSERT INTO ${TABLE_NAME_VIDEOS}(id, name, durationSeconds) VALUES (?, ?, ?)`, id, name, durationSeconds);
         });
     }
 
-    public printAllRecords() {
+    public printAll() {
         this.db.each(`SELECT * FROM ${TABLE_NAME_VIDEOS}`, (err, row: Video) => {
             console.log(`${row.id}, ${row.name}, ${row.durationSeconds}`);
         });

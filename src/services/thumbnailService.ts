@@ -29,7 +29,7 @@ export async function generateThumbnailFile(videoPath: string, destFileName: str
                 size: THUMBNAIL_SIZE,
             })
             .on("end", () => {
-                console.log(`Thumbnail generated for the video '${videoPath}'.`);
+                console.log(`Thumbnail generated for the video '${videoPath}' as ${destFileName}.`);
                 resolve(outPath);
             })
             .on("error", (err) => {
