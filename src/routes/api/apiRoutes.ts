@@ -83,7 +83,7 @@ router.get("/play", async (req: PlayApiRequest, res) => {
             } else {
                 res.json({ message: "Video playback started." });
             }
-        })
+        });
     } catch (err) {
         res.status(500).json({ error: err });
     }
