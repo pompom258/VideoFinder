@@ -44,9 +44,7 @@ router.get("/", async (req, res) => {
                                 return `
                                 <div class="video-item" id="video-${video.id}">
                                     <div class="thumbnail-container">
-                                        <a href="http://localhost:${PORT}/api/play?videoId=${video.id}">
-                                            <img src="${thumbnailSrc}" alt="${video.videoPath}" title="${video.videoName}" class="video-thumbnail">
-                                        </a>
+                                        <img src="${thumbnailSrc}" alt="${video.videoPath}" title="${video.videoName}" class="video-thumbnail" id="video-thumbnail-${video.id}">
                                         <span class="video-duration">${video.videoDuration}</span>
                                     </div>
                                     <div class="video-info">
@@ -59,6 +57,7 @@ router.get("/", async (req, res) => {
                         </div>
                     </div>
                     <script src="js/events/searchEvent.js"></script>
+                    <script src="js/events/playEvent.js"></script>
                 </body>
             </html>
         `;
