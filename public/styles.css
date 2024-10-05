@@ -6,7 +6,6 @@ body {
 }
 
 .container {
-    max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
 }
@@ -53,8 +52,9 @@ h1 {
 }
 
 .video-item {
-    flex-basis: calc(25% - 20px);
-    min-width: 200px;
+    flex: 1 0 200px;
+    min-width: 375px;
+    max-width: calc(25% - 20px);
     background-color: #fff;
     border-radius: 8px;
     overflow: hidden;
