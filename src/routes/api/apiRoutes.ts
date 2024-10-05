@@ -22,27 +22,28 @@ router.get("/videos", async (req, res) => {
 
         const videoFiles: string[] = findVideoFilesRecurse();
 
-        const videoList: VideosApiResponse[] = await Promise.all(videoFiles
-            .map(async (videoPath, index) => {
-                const id: number = index + 1;
+        const videoList: VideosApiResponse[] = [];
+        for (let i = 0; i < videoFiles.length; i++) {
+            const videoPath = videoFiles[i];
 
-                const thumbnailName = `${id}.png`
-                const thumbnailPath = await generateThumbnailFile(videoPath, thumbnailName);
+            const id: number = i + 1;
 
-                const videoDuration = await getVideoDuration(videoPath);
+            const thumbnailName = `${id}.png`
+            const thumbnailPath = await generateThumbnailFile(videoPath, thumbnailName);
 
-                videoStorage.add(id, videoPath, videoDuration);
+            const videoDuration = await getVideoDuration(videoPath);
 
-                return {
-                    id: id,
-                    videoName: path.basename(videoPath),
-                    videoPath: videoPath,
-                    thumbnailName: thumbnailName,
-                    thumbnailPath: thumbnailPath,
-                    videoDuration: formatDuration(videoDuration)
-                }
-            })
-        );
+            videoStorage.add(id, videoPath, videoDuration);
+
+            videoList.push({
+                id: id,
+                videoName: path.basename(videoPath),
+                videoPath: videoPath,
+                thumbnailName: thumbnailName,
+                thumbnailPath: thumbnailPath,
+                videoDuration: formatDuration(videoDuration)
+            });
+        }
 
         res.json(videoList);
     }

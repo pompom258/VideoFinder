@@ -8,6 +8,7 @@ import ffmpeg from 'fluent-ffmpeg';
  */
 export async function getVideoDuration(videoPath: string): Promise<number> {
     return new Promise<number>((resolve, reject) => {
+        console.log(`Retrieving the duration of the video '${videoPath}'...`);
         ffmpeg.ffprobe(videoPath, (err, data) => {
             if (err) {
                 console.log(`An error occurred while retrieving the duration of the video '${videoPath}'.`);
