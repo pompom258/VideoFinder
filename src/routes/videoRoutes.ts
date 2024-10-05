@@ -42,9 +42,9 @@ router.get("/", async (req, res) => {
                                     : `/default/${encodeURIComponent(DEFAULT_THUMBNAIL_IMGNAME)}`;
 
                                 return `
-                                <div class="video-item">
+                                <div class="video-item" id="video-${video.id}">
                                     <div class="thumbnail-container">
-                                        <a href="${video.videoPath}">
+                                        <a href="http://localhost:${PORT}/api/play?videoId=${video.id}">
                                             <img src="${thumbnailSrc}" alt="${video.videoPath}" title="${video.videoName}" class="video-thumbnail">
                                         </a>
                                         <span class="video-duration">${video.videoDuration}</span>

@@ -7,6 +7,7 @@ import { findVideoFilesRecurse } from '../../model/utils/fileUtil';
 import { generateThumbnailFile } from '../../model/services/thumbnailService';
 import { formatDuration, getVideoDuration } from '../../model/services/durationService';
 import { VideosApiResponse } from '../../entities/apiResponse';
+import { PlayApiRequest } from '../../entities/apiRequest';
 
 const router = express.Router();
 const videoStorage = new VideoStorage();
@@ -58,10 +59,10 @@ router.get("/videos", async (req, res) => {
 /**
  * IDに対応する動画をローカルマシンの既定のアプリケーションで再生するAPI
  */
-router.post("/play", async (req, res) => {
+router.get("/play", async (req: PlayApiRequest, res) => {
     try {
-        const { videoId } = req.body;
-        const { path } = await videoStorage.get(videoId);
+        const { videoId } = req.query;
+        const { path } = await videoStorage.get(parseInt(videoId!));
 
         const command: string = `start "" "${path}"`;
         exec(command, (err) => {
