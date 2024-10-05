@@ -60,6 +60,7 @@ router.get("/videos", async (req, res) => {
  * IDに対応する動画をローカルマシンの既定のアプリケーションで再生するAPI
  */
 router.get("/play", async (req: PlayApiRequest, res) => {
+    console.log(`[${new Date().toISOString()}] [Play API Handler] ${req.method} '${req.url}' User-Agent: ${req.headers['user-agent']}`);
     try {
         const { videoId } = req.query;
         const { path } = await videoStorage.get(parseInt(videoId!));
