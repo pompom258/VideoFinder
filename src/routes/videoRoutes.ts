@@ -7,6 +7,14 @@ import { generateThumbnailFile } from '../services/thumbnailService';
 import { formatDuration, getVideoDuration } from '../services/durationService';
 import { VideoStorage } from '../videoStorage';
 
+interface VideoView {
+    videoName: string;
+    videoPath: string;
+    thumbnailName: string;
+    thumbnailPath: string;
+    videoDuration: string;
+}
+
 const router = express.Router();
 
 router.get("/", async (req, res) => {
@@ -17,7 +25,7 @@ router.get("/", async (req, res) => {
 
         const videoFiles: string[] = findVideoFilesRecurse();
 
-        const videoList = await Promise.all(videoFiles
+        const videoList: VideoView[] = await Promise.all(videoFiles
             .map(async (videoPath, index) => {
                 const id: number = index + 1;
 
@@ -82,6 +90,7 @@ router.get("/", async (req, res) => {
         `;
 
         videoStorage.printAll();
+        videoStorage.close();
         res.send(html);
     } catch (err) {
         const msg = `Error: ${err}`;
