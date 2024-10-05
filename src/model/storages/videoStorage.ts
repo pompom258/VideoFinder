@@ -1,12 +1,6 @@
 import sqlite3 from "sqlite3";
 import { TABLE_NAME_VIDEOS, TABLE_PATH_VIDEOS } from "../../config/constants";
 
-interface Video {
-    id: number;
-    name: string;
-    durationSeconds: number
-}
-
 export class VideoStorage {
     private db = new sqlite3.Database(TABLE_PATH_VIDEOS);
 
@@ -27,9 +21,9 @@ export class VideoStorage {
         });
     }
 
-    public async get(id: number): Promise<Video> {
-        return new Promise<Video>((resolve, reject) => {
-            this.db.get(`SELECT * FROM ${TABLE_NAME_VIDEOS} WHERE id = ?`, id, (err, row: Video) => {
+    public async get(id: number): Promise<VideosTableRecord> {
+        return new Promise<VideosTableRecord>((resolve, reject) => {
+            this.db.get(`SELECT * FROM ${TABLE_NAME_VIDEOS} WHERE id = ?`, id, (err, row: VideosTableRecord) => {
                 if (err) {
                     reject(err);
                     return;
@@ -44,9 +38,9 @@ export class VideoStorage {
         });
     }
 
-    public async getAll(): Promise<Video[]> {
-        return new Promise<Video[]>((resolve, reject) => {
-            this.db.all(`SELECT * FROM ${TABLE_NAME_VIDEOS}`, (err, rows: Video[]) => {
+    public async getAll(): Promise<VideosTableRecord[]> {
+        return new Promise<VideosTableRecord[]>((resolve, reject) => {
+            this.db.all(`SELECT * FROM ${TABLE_NAME_VIDEOS}`, (err, rows: VideosTableRecord[]) => {
                 if (err) {
                     reject(err);
                     return;
@@ -62,7 +56,7 @@ export class VideoStorage {
     }
 
     public printAll() {
-        this.db.each(`SELECT * FROM ${TABLE_NAME_VIDEOS}`, (err, row: Video) => {
+        this.db.each(`SELECT * FROM ${TABLE_NAME_VIDEOS}`, (err, row: VideosTableRecord) => {
             console.log(`${row.id}, ${row.name}, ${row.durationSeconds}`);
         });
     }

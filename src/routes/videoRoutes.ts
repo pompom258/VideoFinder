@@ -1,50 +1,24 @@
 import express from 'express';
+import axios from 'axios'
 import path from 'path';
 
-import { findVideoFilesRecurse, isFileExists } from "../model/utils/fileUtil";
 import { DEFAULT_THUMBNAIL_IMGNAME } from '../config/constants';
-import { generateThumbnailFile } from '../model/services/thumbnailService';
-import { formatDuration, getVideoDuration } from '../model/services/durationService';
-import { VideoStorage } from '../model/storages/videoStorage';
-
-interface VideoView {
-    videoName: string;
-    videoPath: string;
-    thumbnailName: string;
-    thumbnailPath: string;
-    videoDuration: string;
-}
+import { PORT } from '../config/env';
+import { isFileExists } from '../model/utils/fileUtil';
+import { VideosApiResponse } from '../entities/apiResponse';
 
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-    console.log(`[${new Date().toISOString()}] ${req.method} '${req.url}' User-Agent: ${req.headers['user-agent']}`);
+    console.log(`[${new Date().toISOString()}] [Videos View handler] ${req.method} '${req.url}' User-Agent: ${req.headers['user-agent']}`);
     try {
-        const videoStorage = new VideoStorage();
-        videoStorage.initialize();
+        const response = await axios.get(`http://localhost:${PORT}/api/videos`);
+        if (response.status !== 200) {
+            console.error(response.data.error);
+            res.status(500).send(response.data.error);
+        }
 
-        const videoFiles: string[] = findVideoFilesRecurse();
-
-        const videoList: VideoView[] = await Promise.all(videoFiles
-            .map(async (videoPath, index) => {
-                const id: number = index + 1;
-
-                const thumbnailName = `${id}.png`
-                const thumbnailPath = await generateThumbnailFile(videoPath, thumbnailName);
-
-                const videoDuration = await getVideoDuration(videoPath);
-
-                videoStorage.add(id, videoPath, videoDuration);
-
-                return {
-                    videoName: path.basename(videoPath),
-                    videoPath: videoPath,
-                    thumbnailName: thumbnailName,
-                    thumbnailPath: thumbnailPath,
-                    videoDuration: formatDuration(videoDuration)
-                }
-            })
-        );
+        const videos: VideosApiResponse[] = response.data;
 
         const html = `
             <html>
@@ -62,7 +36,7 @@ router.get("/", async (req, res) => {
                             <button id="search-button">Search</button>
                         </div>
                         <div class="video-gallery">
-                            ${videoList.map(video => {
+                            ${videos.map(video => {
                                 const thumbnailSrc = isFileExists(video.thumbnailPath)
                                     ? `/thumbnails/${encodeURIComponent(video.thumbnailName)}`
                                     : `/default/${encodeURIComponent(DEFAULT_THUMBNAIL_IMGNAME)}`;
@@ -89,8 +63,6 @@ router.get("/", async (req, res) => {
             </html>
         `;
 
-        videoStorage.printAll();
-        videoStorage.close();
         res.send(html);
     } catch (err) {
         const msg = `Error: ${err}`;
