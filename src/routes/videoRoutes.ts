@@ -48,7 +48,7 @@ router.get("/", async (req, res) => {
                                         <span class="video-duration">${video.videoDuration}</span>
                                     </div>
                                     <div class="video-info">
-                                        <a href="file:///${video.videoPath.replace(/\\/g, "/")}" class="video-title">${video.videoName}</a>
+                                        <p class="video-title" id="video-title-${video.id}">${video.videoName}</p>
                                         <p class="video-path">${path.dirname(video.videoPath)}</p>
                                     </div>
                                 </div>

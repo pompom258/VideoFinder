@@ -1,8 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
     Array.from(document.getElementsByClassName("video-thumbnail")).forEach(thumbnail => {
         thumbnail.addEventListener('click', () => {
-            const id = thumbnail.getAttribute("id")?.split("-").pop();
-            playVideo(id!);
+            const videoId = thumbnail.getAttribute("id")?.split("-").pop();
+            playVideo(videoId!);
+        });
+    })
+
+    Array.from(document.getElementsByClassName("video-title")).forEach(title => {
+        title.addEventListener('click', () => {
+            const videoId = title.getAttribute("id")?.split("-").pop();
+            playVideo(videoId!);
         });
     })
 });
