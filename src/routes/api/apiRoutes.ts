@@ -44,8 +44,6 @@ router.get("/videos", async (req, res) => {
             })
         );
 
-        videoStorage.printAll();
-
         res.json(videoList);
     }
     catch (err) {
