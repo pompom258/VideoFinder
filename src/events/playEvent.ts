@@ -23,6 +23,6 @@ function playVideo(videoId: string): void {
             }
         })
         .catch(err => {
-            console.error(`Error occured in playVideo event handler: ${err}`);
+            console.error(`Error occurred in playVideo event handler: ${err}`);
         });
 }

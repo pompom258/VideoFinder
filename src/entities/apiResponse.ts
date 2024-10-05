@@ -5,4 +5,5 @@ export interface VideosApiResponse {
     thumbnailName: string;
     thumbnailPath: string;
     videoDuration: string;
+    isThumbnailGenerationSucceed: boolean;
 }

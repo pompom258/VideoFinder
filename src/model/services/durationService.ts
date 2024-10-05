@@ -11,7 +11,7 @@ export async function getVideoDuration(videoPath: string): Promise<number> {
         console.log(`Retrieving the duration of the video '${videoPath}'...`);
         ffmpeg.ffprobe(videoPath, (err, data) => {
             if (err) {
-                console.log(`An error occurred while retrieving the duration of the video '${videoPath}'.`);
+                console.error(`An error occurred while retrieving the duration of the video '${videoPath}'.`);
                 reject(err);
                 return;
             }

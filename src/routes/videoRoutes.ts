@@ -4,7 +4,6 @@ import path from 'path';
 
 import { DEFAULT_THUMBNAIL_IMGNAME } from '../config/constants';
 import { PORT } from '../config/env';
-import { isFileExists } from '../model/utils/fileUtil';
 import { VideosApiResponse } from '../entities/apiResponse';
 
 const router = express.Router();
@@ -13,10 +12,6 @@ router.get("/", async (req, res) => {
     console.log(`[${new Date().toISOString()}] [Videos View handler] ${req.method} '${req.url}' User-Agent: ${req.headers['user-agent']}`);
     try {
         const response = await axios.get(`http://localhost:${PORT}/api/videos`);
-        if (response.status !== 200) {
-            console.error(response.data.error);
-            res.status(500).send(response.data.error);
-        }
 
         const videos: VideosApiResponse[] = response.data;
 
@@ -37,7 +32,7 @@ router.get("/", async (req, res) => {
                         </div>
                         <div class="video-gallery">
                             ${videos.map(video => {
-                                const thumbnailSrc = isFileExists(video.thumbnailPath)
+                                const thumbnailSrc = video.isThumbnailGenerationSucceed
                                     ? `/thumbnails/${encodeURIComponent(video.thumbnailName)}`
                                     : `/default/${encodeURIComponent(DEFAULT_THUMBNAIL_IMGNAME)}`;
 
@@ -64,10 +59,20 @@ router.get("/", async (req, res) => {
 
         res.send(html);
     } catch (err) {
-        const msg = `Error: ${err}`;
+        const html = `
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="utf-8" />
+                <title>Error</title>
+            </head>
+            <body>
+                <pre>${err}</pre>
+            </body>
+            </html>
+        `;
 
-        console.error(msg, err);
-        res.status(500).send(msg);
+        res.status(200).send(html);
     }
 });
 

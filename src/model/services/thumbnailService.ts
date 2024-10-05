@@ -33,7 +33,8 @@ export async function generateThumbnailFile(videoPath: string, destFileName: str
                 resolve(outPath);
             })
             .on("error", (err) => {
-                console.log(`An error occurred while generating the thumbnail for the video '${videoPath}'.`);
+                console.error(`An error occurred while generating the thumbnail for the video '${videoPath}'.`);
+                ensureThumbnailFileNotExists(outPath);
                 reject(err);
             });
     });
@@ -42,5 +43,11 @@ export async function generateThumbnailFile(videoPath: string, destFileName: str
 function ensureThumbnailDirectoryExists() {
     if (!fs.existsSync(THUMBNAIL_DIRECTORY)) {
         fs.mkdirSync(THUMBNAIL_DIRECTORY, { recursive: true });
+    }
+}
+
+function ensureThumbnailFileNotExists(path: string) {
+    if (fs.existsSync(path)) {
+        fs.rmSync(path);
     }
 }

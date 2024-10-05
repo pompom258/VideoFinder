@@ -29,9 +29,21 @@ router.get("/videos", async (req, res) => {
             const id: number = i + 1;
 
             const thumbnailName = `${id}.png`
-            const thumbnailPath = await generateThumbnailFile(videoPath, thumbnailName);
 
-            const videoDuration = await getVideoDuration(videoPath);
+            let thumbnailPath: string | undefined = undefined;
+            try {
+                thumbnailPath = await generateThumbnailFile(videoPath, thumbnailName);
+            } catch {
+                console.warn(`Generation of the Thumbnail for the video '${videoPath}' failed, so generation is skipped.`);
+            }
+
+            let videoDuration: number | undefined = undefined;
+            try {
+                videoDuration = await getVideoDuration(videoPath);
+            } catch {
+                videoDuration = 0;
+                console.warn(`Retrieving the duration of the video '${videoPath}' failed, so set the duration to 0.`);
+            }
 
             videoStorage.add(id, videoPath, videoDuration);
 
@@ -39,19 +51,18 @@ router.get("/videos", async (req, res) => {
                 id: id,
                 videoName: path.basename(videoPath),
                 videoPath: videoPath,
-                thumbnailName: thumbnailName,
-                thumbnailPath: thumbnailPath,
-                videoDuration: formatDuration(videoDuration)
+                thumbnailName: thumbnailPath ? thumbnailName : "",
+                thumbnailPath: thumbnailPath ?? "",
+                videoDuration: formatDuration(videoDuration),
+                isThumbnailGenerationSucceed: thumbnailPath !== undefined
             });
         }
 
         res.json(videoList);
     }
     catch (err) {
-        const msg = `Error: ${err}`;
-
-        console.error(msg, err);
-        res.status(500).json({ error: msg });
+        console.log(`A fatal error occurred while executing Videos API: ${err}`);
+        res.status(500).json({ error: err });
     }
 });
 
@@ -74,10 +85,7 @@ router.get("/play", async (req: PlayApiRequest, res) => {
             }
         })
     } catch (err) {
-        const msg = `Error: ${err}`;
-
-        console.error(msg, err);
-        res.status(500).json({ error: msg });
+        res.status(500).json({ error: err });
     }
 });
 
