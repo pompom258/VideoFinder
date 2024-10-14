@@ -70,7 +70,7 @@ router.get("/videos", async (req, res) => {
         const thumbnails: ThumbnailsTableRecord[] = await thumbnailStorage.getAll();
 
         res.json(videos.map((video: VideosTableRecord): VideosApiResponse => {
-            const thumbnail: ThumbnailsTableRecord = thumbnails.filter(thumbnail => thumbnail.id === video.id)[0];
+            const thumbnail: ThumbnailsTableRecord | undefined = thumbnails.find(thumbnail => thumbnail.id === video.id);
             return {
                 id: video.id,
                 videoName: path.basename(video.path),
