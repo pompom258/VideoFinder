@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
         thumbnail.addEventListener('mouseover', () => {
             hoverTimer = setTimeout(() => {
                 const videoId = thumbnail.getAttribute("id")?.split("-").pop();
-                playAnimationThumbnail(videoId!);
+                playAnimationThumbnail(videoId!, thumbnail);
             }, 350);
         });
 
@@ -17,6 +17,20 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 });
 
-function playAnimationThumbnail(id: string): void {
-    console.log(`Not implemented yet!\id: ${id}`);
+function playAnimationThumbnail(videoId: string, thumbnail: Element): void {
+    const url = new URL(`/api/getGif?videoId=${videoId}`, document.baseURI);
+    fetch(url.href)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("getGIf API error");
+            }
+
+            return response.blob();
+        })
+        .then(blob => {
+            thumbnail.setAttribute('src', URL.createObjectURL(blob));
+        })
+        .catch(err => {
+            console.error(`Error occurred in getGif event handler: ${err}`);
+        });
 }

@@ -11,3 +11,9 @@ export interface PlayApiRequest extends Request {
         videoId: string | undefined
     }
 }
+
+export interface GetGifApiRequest extends Request {
+    query: {
+        videoId: string | undefined
+    }
+}

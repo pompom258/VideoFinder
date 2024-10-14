@@ -4,9 +4,9 @@ import { exec } from 'child_process';
 
 import { VideoStorage } from '../../model/storages/videoStorage';
 import { findVideoFilesRecurse } from '../../model/utils/fileUtil';
-import { generateThumbnailFile } from '../../model/services/thumbnailService';
+import { generateThumbnailFile, generateThumbnailGif } from '../../model/services/thumbnailService';
 import { formatDuration, getVideoDuration } from '../../model/services/durationService';
-import { ScanApiRequest, PlayApiRequest } from '../../entities/apiRequest';
+import { ScanApiRequest, PlayApiRequest, GetGifApiRequest } from '../../entities/apiRequest';
 import { ThumbnailStorage } from '../../model/storages/thumbnailStorage';
 import { VideosApiResponse } from '../../entities/apiResponse';
 
@@ -108,6 +108,30 @@ router.get("/play", async (req: PlayApiRequest, res) => {
         });
     } catch (err) {
         console.error(`A fatal error occurred while executing Play API: ${err}`);
+        res.status(500).json({ error: err });
+    }
+});
+
+/**
+ * IDに対応する動画のGIFサムネイルを生成して返却するAPI
+ */
+router.get("/getGif", async (req: GetGifApiRequest, res) => {
+    console.log(`[${new Date().toISOString()}] [GetGif API Handler] ${req.method} '${req.url}' User-Agent: ${req.headers['user-agent']}`);
+    try {
+        const { videoId } = req.query;
+        const { path } = await videoStorage.get(parseInt(videoId!));
+
+        let thumbnailPath: string | undefined = undefined;
+        try {
+            thumbnailPath = await generateThumbnailGif(path, `${videoId}.gif`);
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: "Failed to generate animation Thumbnail." });
+        }
+
+        res.sendFile(thumbnailPath!);
+    } catch (err) {
+        console.error(`A fatal error occurred while executing GetGif API: ${err}`);
         res.status(500).json({ error: err });
     }
 });
