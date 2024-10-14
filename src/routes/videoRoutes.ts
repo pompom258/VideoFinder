@@ -51,6 +51,7 @@ router.get("/", async (req, res) => {
                     </div>
                     <script src="js/events/searchEvent.js"></script>
                     <script src="js/events/playEvent.js"></script>
+                    <script src="js/events/thumbnailEvent.js"></script>
                 </body>
             </html>
         `;
