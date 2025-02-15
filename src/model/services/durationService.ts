@@ -1,4 +1,4 @@
-import ffmpeg from 'fluent-ffmpeg';
+import ffmpeg from "fluent-ffmpeg";
 
 /**
  * 動画の長さを取得する。
@@ -7,23 +7,29 @@ import ffmpeg from 'fluent-ffmpeg';
  * @returns 動画の長さ(秒)
  */
 export async function getVideoDuration(videoPath: string): Promise<number> {
-    return new Promise<number>((resolve, reject) => {
-        console.log(`Retrieving the duration of the video '${videoPath}'...`);
-        ffmpeg.ffprobe(videoPath, (err, data) => {
-            if (err) {
-                console.error(`An error occurred while retrieving the duration of the video '${videoPath}'.`);
-                reject(err);
-                return;
-            }
+  return new Promise<number>((resolve, reject) => {
+    console.log(`Retrieving the duration of the video '${videoPath}'...`);
+    ffmpeg.ffprobe(videoPath, (err, data) => {
+      if (err) {
+        console.error(
+          `An error occurred while retrieving the duration of the video '${videoPath}'.`,
+        );
+        reject(err);
+        return;
+      }
 
-            const durationInSeconds = data.format?.duration;
-            if (typeof durationInSeconds === 'number') {
-                resolve(durationInSeconds);
-            } else {
-                reject(new Error(`The duration of the video '${videoPath}' could not be retrieved.`));
-            }
-        });
+      const durationInSeconds = data.format?.duration;
+      if (typeof durationInSeconds === "number") {
+        resolve(durationInSeconds);
+      } else {
+        reject(
+          new Error(
+            `The duration of the video '${videoPath}' could not be retrieved.`,
+          ),
+        );
+      }
     });
+  });
 }
 
 /**
@@ -36,13 +42,13 @@ export async function getVideoDuration(videoPath: string): Promise<number> {
  * @returns 動画の長さ(文字列形式)
  */
 export function formatDuration(durationInSeconds: number): string {
-    const hours = Math.floor(durationInSeconds / 3600);
-    const minutes = Math.floor((durationInSeconds % 3600) / 60);
-    const seconds = Math.floor(durationInSeconds % 60);
+  const hours = Math.floor(durationInSeconds / 3600);
+  const minutes = Math.floor((durationInSeconds % 3600) / 60);
+  const seconds = Math.floor(durationInSeconds % 60);
 
-    if (hours > 0) {
-        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    } else {
-        return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    }
+  if (hours > 0) {
+    return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+  } else {
+    return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+  }
 }

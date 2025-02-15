@@ -1,19 +1,23 @@
-import express from 'express';
-import axios from 'axios'
-import path from 'path';
+import express from "express";
+import axios from "axios";
+import path from "path";
 
-import { DEFAULT_THUMBNAIL_IMGNAME } from '../config/constants';
-import { PORT } from '../config/env';
-import { VideosApiResponse } from '../entities/apiResponse';
+import { DEFAULT_THUMBNAIL_IMGNAME } from "../config/constants";
+import { PORT } from "../config/env";
+import { VideosApiResponse } from "../entities/apiResponse";
 
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-    console.log(`[${new Date().toISOString()}] [Videos View handler] ${req.method} '${req.url}' User-Agent: ${req.headers['user-agent']}`);
-    try {
-        const { data: videos }: { data: VideosApiResponse[] } = await axios.get(`http://localhost:${PORT}/api/videos`);
+  console.log(
+    `[${new Date().toISOString()}] [Videos View handler] ${req.method} '${req.url}' User-Agent: ${req.headers["user-agent"]}`,
+  );
+  try {
+    const { data: videos }: { data: VideosApiResponse[] } = await axios.get(
+      `http://localhost:${PORT}/api/videos`,
+    );
 
-        const html = `
+    const html = `
             <html>
                 <head>
                     <meta charset="UTF-8">
@@ -29,8 +33,10 @@ router.get("/", async (req, res) => {
                             <button id="search-button">Search</button>
                         </div>
                         <div class="video-gallery">
-                            ${videos.map(video => {
-                                const thumbnailSrc = video.isThumbnailGenerationSucceed
+                            ${videos
+                              .map((video) => {
+                                const thumbnailSrc =
+                                  video.isThumbnailGenerationSucceed
                                     ? `/thumbnails/${encodeURIComponent(video.thumbnailName)}`
                                     : `/default/${encodeURIComponent(DEFAULT_THUMBNAIL_IMGNAME)}`;
 
@@ -46,7 +52,8 @@ router.get("/", async (req, res) => {
                                     </div>
                                 </div>
                                 `;
-                            }).join('')}
+                              })
+                              .join("")}
                         </div>
                     </div>
                     <script src="js/events/searchEvent.js"></script>
@@ -56,9 +63,9 @@ router.get("/", async (req, res) => {
             </html>
         `;
 
-        res.send(html);
-    } catch (err) {
-        const html = `
+    res.send(html);
+  } catch (err) {
+    const html = `
             <!DOCTYPE html>
             <html lang="en">
             <head>
@@ -71,8 +78,8 @@ router.get("/", async (req, res) => {
             </html>
         `;
 
-        res.status(200).send(html);
-    }
+    res.status(200).send(html);
+  }
 });
 
 export default router;

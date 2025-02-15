@@ -1,19 +1,19 @@
-import { Request } from 'express';
+import { Request } from "express";
 
 export interface ScanApiRequest extends Request {
-    query: {
-        dirPath: string | undefined
-    }
+  query: {
+    dirPath: string | undefined;
+  };
 }
 
 export interface PlayApiRequest extends Request {
-    query: {
-        videoId: string | undefined
-    }
+  query: {
+    videoId: string | undefined;
+  };
 }
 
 export interface GetGifApiRequest extends Request {
-    query: {
-        videoId: string | undefined
-    }
+  query: {
+    videoId: string | undefined;
+  };
 }
