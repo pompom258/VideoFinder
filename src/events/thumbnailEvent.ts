@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   Array.from(document.getElementsByClassName("video-thumbnail")).forEach(
     (thumbnail) => {
       let hoverTimer: ReturnType<typeof setTimeout> | null = null;
+      const originalSrc = thumbnail.getAttribute("src");
 
       thumbnail.addEventListener("mouseover", () => {
         hoverTimer = setTimeout(() => {
@@ -14,8 +15,11 @@ document.addEventListener("DOMContentLoaded", () => {
         if (hoverTimer) {
           clearTimeout(hoverTimer);
         }
+        if (originalSrc) {
+          thumbnail.setAttribute("src", originalSrc);
+        }
       });
-    },
+    }
   );
 });
 
