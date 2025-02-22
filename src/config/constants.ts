@@ -1,4 +1,8 @@
+import { fileURLToPath } from "url";
 import path from "path";
+
+export const __filename = fileURLToPath(import.meta.url);
+export const __dirname = path.dirname(__filename);
 
 export const VIDEO_DIRECTORY = path.join(__dirname, "../../sample");
 export const VIDEO_EXTENSIONS = [
@@ -12,7 +16,7 @@ export const VIDEO_EXTENSIONS = [
 
 export const THUMBNAIL_DIRECTORY = path.join(
   __dirname,
-  "../../public/thumbnails",
+  "../../public/thumbnails"
 );
 export const THUMBNAIL_SIZE = "768x432";
 export const DEFAULT_THUMBNAIL_IMGNAME = "thumbnail_default.png";

@@ -1,8 +1,8 @@
 import express from "express";
 
-import videoRouter from "./routes/videoRoutes";
-import videoServer from "./routes/api/apiRoutes";
-import { PORT } from "./config/env";
+import videoRouter from "./routes/videoRoutes.js";
+import videoServer from "./routes/api/apiRoutes.js";
+import { PORT } from "./config/env.js";
 
 const app = express();
 
@@ -16,7 +16,7 @@ app.use("/js", express.static("dist"));
 
 app.use((req, res) => {
   console.log(
-    `[${new Date().toISOString()}] [404 Handler] ${req.method} '${req.url}' User-Agent: ${req.headers["user-agent"]}`,
+    `[${new Date().toISOString()}] [404 Handler] ${req.method} '${req.url}' User-Agent: ${req.headers["user-agent"]}`
   );
   const html = `
         <!DOCTYPE html>

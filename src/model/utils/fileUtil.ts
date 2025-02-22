@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 
-import { VIDEO_DIRECTORY, VIDEO_EXTENSIONS } from "../../config/constants";
+import { VIDEO_DIRECTORY, VIDEO_EXTENSIONS } from "../../config/constants.js";
 
 /**
  * 動画ファイルの検索を行う。サブフォルダ配下も検索対象とする。

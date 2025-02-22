@@ -2,23 +2,27 @@ import express from "express";
 import path from "path";
 import { exec } from "child_process";
 
-import { VideoStorage } from "../../model/storages/videoStorage";
-import { findVideoFilesRecurse } from "../../model/utils/fileUtil";
+import { VideoStorage } from "../../model/storages/videoStorage.js";
+import { findVideoFilesRecurse } from "../../model/utils/fileUtil.js";
 import {
   generateThumbnailFile,
   generateThumbnailGif,
-} from "../../model/services/thumbnailService";
+} from "../../model/services/thumbnailService.js";
 import {
   formatDuration,
   getVideoDuration,
-} from "../../model/services/durationService";
+} from "../../model/services/durationService.js";
 import {
   ScanApiRequest,
   PlayApiRequest,
   GetGifApiRequest,
-} from "../../entities/apiRequest";
-import { ThumbnailStorage } from "../../model/storages/thumbnailStorage";
-import { VideosApiResponse } from "../../entities/apiResponse";
+} from "../../entities/apiRequest.js";
+import { ThumbnailStorage } from "../../model/storages/thumbnailStorage.js";
+import { VideosApiResponse } from "../../entities/apiResponse.js";
+import {
+  VideosTableRecord,
+  ThumbnailsTableRecord,
+} from "../../entities/table.js";
 
 const router = express.Router();
 const videoStorage = new VideoStorage();
@@ -29,7 +33,7 @@ const thumbnailStorage = new ThumbnailStorage();
  */
 router.post("/scan", async (req: ScanApiRequest, res) => {
   console.log(
-    `[${new Date().toISOString()}] [Scan API Handler] ${req.method} '${req.url}' User-Agent: ${req.headers["user-agent"]}`,
+    `[${new Date().toISOString()}] [Scan API Handler] ${req.method} '${req.url}' User-Agent: ${req.headers["user-agent"]}`
   );
   try {
     const { dirPath } = req.body;
@@ -51,7 +55,7 @@ router.post("/scan", async (req: ScanApiRequest, res) => {
         thumbnailPath = await generateThumbnailFile(videoPath, thumbnailName);
       } catch {
         console.warn(
-          `Generation of the Thumbnail for the video '${videoPath}' failed, so generation is skipped.`,
+          `Generation of the Thumbnail for the video '${videoPath}' failed, so generation is skipped.`
         );
       }
 
@@ -61,7 +65,7 @@ router.post("/scan", async (req: ScanApiRequest, res) => {
       } catch {
         videoDuration = 0;
         console.warn(
-          `Retrieving the duration of the video '${videoPath}' failed, so set the duration to 0.`,
+          `Retrieving the duration of the video '${videoPath}' failed, so set the duration to 0.`
         );
       }
 
@@ -83,7 +87,7 @@ router.post("/scan", async (req: ScanApiRequest, res) => {
  */
 router.get("/videos", async (req, res) => {
   console.log(
-    `[${new Date().toISOString()}] [Videos API Handler] ${req.method} '${req.url}' User-Agent: ${req.headers["user-agent"]}`,
+    `[${new Date().toISOString()}] [Videos API Handler] ${req.method} '${req.url}' User-Agent: ${req.headers["user-agent"]}`
   );
   try {
     const videos: VideosTableRecord[] = await videoStorage.getAll();
@@ -92,7 +96,7 @@ router.get("/videos", async (req, res) => {
     res.json(
       videos.map((video: VideosTableRecord): VideosApiResponse => {
         const thumbnail: ThumbnailsTableRecord | undefined = thumbnails.find(
-          (thumbnail) => thumbnail.id === video.id,
+          (thumbnail) => thumbnail.id === video.id
         );
         return {
           id: video.id,
@@ -103,10 +107,46 @@ router.get("/videos", async (req, res) => {
           videoDuration: formatDuration(video.durationSeconds),
           isThumbnailGenerationSucceed: thumbnail !== undefined,
         };
-      }),
+      })
     );
   } catch (err) {
     console.error(`A fatal error occurred while executing Videos API: ${err}`);
+    res.status(500).json({ error: err });
+  }
+});
+
+/**
+ * キーワードに基づいて動画を検索するAPI
+ */
+router.get("/search", async (req, res) => {
+  console.log(
+    `[${new Date().toISOString()}] [Search API Handler] ${req.method} '${req.url}' User-Agent: ${req.headers["user-agent"]}`
+  );
+  try {
+    const { keyword } = req.query;
+    const videos: VideosTableRecord[] = await videoStorage.search(
+      keyword as string
+    );
+    const thumbnails: ThumbnailsTableRecord[] = await thumbnailStorage.getAll();
+
+    res.json(
+      videos.map((video: VideosTableRecord): VideosApiResponse => {
+        const thumbnail: ThumbnailsTableRecord | undefined = thumbnails.find(
+          (thumbnail) => thumbnail.id === video.id
+        );
+        return {
+          id: video.id,
+          videoName: path.basename(video.path),
+          videoPath: video.path,
+          thumbnailName: thumbnail ? path.basename(thumbnail.path) : "",
+          thumbnailPath: thumbnail?.path ?? "",
+          videoDuration: formatDuration(video.durationSeconds),
+          isThumbnailGenerationSucceed: thumbnail !== undefined,
+        };
+      })
+    );
+  } catch (err) {
+    console.error(`A fatal error occurred while executing Search API: ${err}`);
     res.status(500).json({ error: err });
   }
 });
@@ -116,7 +156,7 @@ router.get("/videos", async (req, res) => {
  */
 router.get("/play", async (req: PlayApiRequest, res) => {
   console.log(
-    `[${new Date().toISOString()}] [Play API Handler] ${req.method} '${req.url}' User-Agent: ${req.headers["user-agent"]}`,
+    `[${new Date().toISOString()}] [Play API Handler] ${req.method} '${req.url}' User-Agent: ${req.headers["user-agent"]}`
   );
   try {
     const { videoId } = req.query;
@@ -144,7 +184,7 @@ router.get("/play", async (req: PlayApiRequest, res) => {
  */
 router.get("/getGif", async (req: GetGifApiRequest, res) => {
   console.log(
-    `[${new Date().toISOString()}] [GetGif API Handler] ${req.method} '${req.url}' User-Agent: ${req.headers["user-agent"]}`,
+    `[${new Date().toISOString()}] [GetGif API Handler] ${req.method} '${req.url}' User-Agent: ${req.headers["user-agent"]}`
   );
   try {
     const { videoId } = req.query;

@@ -2,7 +2,8 @@ import sqlite3 from "sqlite3";
 import {
   TABLE_NAME_THUMBNAILS,
   TABLE_PATH_THUMBNAILS,
-} from "../../config/constants";
+} from "../../config/constants.js";
+import { ThumbnailsTableRecord } from "../../entities/table.js";
 
 export class ThumbnailStorage {
   private db = new sqlite3.Database(TABLE_PATH_THUMBNAILS);
@@ -11,7 +12,7 @@ export class ThumbnailStorage {
     this.db.serialize(() => {
       this.db.run(`DROP TABLE IF EXISTS ${TABLE_NAME_THUMBNAILS}`);
       this.db.run(
-        `CREATE TABLE IF NOT EXISTS ${TABLE_NAME_THUMBNAILS}(id INTEGER UNIQUE PRIMARY KEY, path TEXT)`,
+        `CREATE TABLE IF NOT EXISTS ${TABLE_NAME_THUMBNAILS}(id INTEGER UNIQUE PRIMARY KEY, path TEXT)`
       );
     });
   }
@@ -25,7 +26,7 @@ export class ThumbnailStorage {
       this.db.run(
         `INSERT INTO ${TABLE_NAME_THUMBNAILS}(id, path) VALUES (?, ?)`,
         id,
-        path,
+        path
       );
     });
   }
@@ -46,7 +47,7 @@ export class ThumbnailStorage {
           } else {
             reject(new Error("The thumbnail not found."));
           }
-        },
+        }
       );
     });
   }
@@ -66,7 +67,7 @@ export class ThumbnailStorage {
           } else {
             reject(new Error("The thumbnail not found."));
           }
-        },
+        }
       );
     });
   }
@@ -76,7 +77,7 @@ export class ThumbnailStorage {
       `SELECT * FROM ${TABLE_NAME_THUMBNAILS}`,
       (err, row: ThumbnailsTableRecord) => {
         console.log(`${row.id}, ${row.path}`);
-      },
+      }
     );
   }
 }

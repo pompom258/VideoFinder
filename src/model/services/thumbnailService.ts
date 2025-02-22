@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import ffmpeg from "fluent-ffmpeg";
-import { THUMBNAIL_DIRECTORY, THUMBNAIL_SIZE } from "../../config/constants";
+import { THUMBNAIL_DIRECTORY, THUMBNAIL_SIZE } from "../../config/constants.js";
 
 /**
  * 動画のサムネイル画像を生成する。既に生成済みの場合は何もしない。
@@ -11,7 +11,7 @@ import { THUMBNAIL_DIRECTORY, THUMBNAIL_SIZE } from "../../config/constants";
  */
 export async function generateThumbnailFile(
   videoPath: string,
-  destFileName: string,
+  destFileName: string
 ): Promise<string> {
   ensureThumbnailDirectoryExists();
 
@@ -19,7 +19,7 @@ export async function generateThumbnailFile(
   return new Promise<string>((resolve, reject) => {
     if (fs.existsSync(outPath)) {
       console.log(
-        `Thumbnail for the video '${videoPath}' already exists, so generation is skipped.`,
+        `Thumbnail for the video '${videoPath}' already exists, so generation is skipped.`
       );
       resolve(outPath);
       return;
@@ -35,13 +35,13 @@ export async function generateThumbnailFile(
       })
       .on("end", () => {
         console.log(
-          `Thumbnail generated for the video '${videoPath}' as ${destFileName}.`,
+          `Thumbnail generated for the video '${videoPath}' as ${destFileName}.`
         );
         resolve(outPath);
       })
       .on("error", (err) => {
         console.error(
-          `An error occurred while generating the thumbnail for the video '${videoPath}'.`,
+          `An error occurred while generating the thumbnail for the video '${videoPath}'.`
         );
         ensureThumbnailFileNotExists(outPath);
         reject(err);
@@ -57,7 +57,7 @@ export async function generateThumbnailFile(
  */
 export async function generateThumbnailGif(
   videoPath: string,
-  destFileName: string,
+  destFileName: string
 ): Promise<string> {
   ensureThumbnailDirectoryExists();
 
@@ -65,14 +65,14 @@ export async function generateThumbnailGif(
   return new Promise<string>((resolve, reject) => {
     if (fs.existsSync(outPath)) {
       console.log(
-        `Animation thumbnail for the video '${videoPath}' already exists, so generation is skipped.`,
+        `Animation thumbnail for the video '${videoPath}' already exists, so generation is skipped.`
       );
       resolve(outPath);
       return;
     }
 
     console.log(
-      `Generating animation thumbnail for the video '${videoPath}'...`,
+      `Generating animation thumbnail for the video '${videoPath}'...`
     );
     ffmpeg(videoPath)
       .setStartTime("00:00:00")
@@ -81,13 +81,13 @@ export async function generateThumbnailGif(
       .fps(10)
       .on("end", () => {
         console.log(
-          `Animation thumbnail generated for the video '${videoPath}' as ${destFileName}.`,
+          `Animation thumbnail generated for the video '${videoPath}' as ${destFileName}.`
         );
         resolve(outPath);
       })
       .on("error", (err) => {
         console.error(
-          `An error occurred while generating the animation thumbnail for the video '${videoPath}'.`,
+          `An error occurred while generating the animation thumbnail for the video '${videoPath}'.`
         );
         ensureThumbnailFileNotExists(outPath);
         reject(err);

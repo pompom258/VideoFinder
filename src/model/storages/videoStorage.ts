@@ -1,5 +1,9 @@
 import sqlite3 from "sqlite3";
-import { TABLE_NAME_VIDEOS, TABLE_PATH_VIDEOS } from "../../config/constants";
+import {
+  TABLE_NAME_VIDEOS,
+  TABLE_PATH_VIDEOS,
+} from "../../config/constants.js";
+import { VideosTableRecord } from "../../entities/table.js";
 
 export class VideoStorage {
   private db = new sqlite3.Database(TABLE_PATH_VIDEOS);
@@ -8,7 +12,7 @@ export class VideoStorage {
     this.db.serialize(() => {
       this.db.run(`DROP TABLE IF EXISTS ${TABLE_NAME_VIDEOS}`);
       this.db.run(
-        `CREATE TABLE IF NOT EXISTS ${TABLE_NAME_VIDEOS}(id INTEGER UNIQUE PRIMARY KEY, path TEXT, durationSeconds INTEGER)`,
+        `CREATE TABLE IF NOT EXISTS ${TABLE_NAME_VIDEOS}(id INTEGER UNIQUE PRIMARY KEY, path TEXT, durationSeconds INTEGER)`
       );
     });
   }
@@ -23,7 +27,7 @@ export class VideoStorage {
         `INSERT INTO ${TABLE_NAME_VIDEOS}(id, path, durationSeconds) VALUES (?, ?, ?)`,
         id,
         path,
-        durationSeconds,
+        durationSeconds
       );
     });
   }
@@ -44,7 +48,7 @@ export class VideoStorage {
           } else {
             reject(new Error("The video not found."));
           }
-        },
+        }
       );
     });
   }
@@ -64,9 +68,15 @@ export class VideoStorage {
           } else {
             reject(new Error("The video not found."));
           }
-        },
+        }
       );
     });
+  }
+
+  async search(keyword: string): Promise<VideosTableRecord[]> {
+    // 簡単な検索ロジックを実装（例：動画名にキーワードが含まれているか）
+    const allVideos = await this.getAll();
+    return allVideos.filter((video) => video.path.includes(keyword));
   }
 
   public printAll() {
@@ -74,7 +84,7 @@ export class VideoStorage {
       `SELECT * FROM ${TABLE_NAME_VIDEOS}`,
       (err, row: VideosTableRecord) => {
         console.log(`${row.id}, ${row.path}, ${row.durationSeconds}`);
-      },
+      }
     );
   }
 }

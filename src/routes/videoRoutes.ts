@@ -2,19 +2,19 @@ import express from "express";
 import axios from "axios";
 import path from "path";
 
-import { DEFAULT_THUMBNAIL_IMGNAME } from "../config/constants";
-import { PORT } from "../config/env";
-import { VideosApiResponse } from "../entities/apiResponse";
+import { DEFAULT_THUMBNAIL_IMGNAME } from "../config/constants.js";
+import { PORT } from "../config/env.js";
+import { VideosApiResponse } from "../entities/apiResponse.js";
 
 const router = express.Router();
 
 router.get("/", async (req, res) => {
   console.log(
-    `[${new Date().toISOString()}] [Videos View handler] ${req.method} '${req.url}' User-Agent: ${req.headers["user-agent"]}`,
+    `[${new Date().toISOString()}] [Videos View handler] ${req.method} '${req.url}' User-Agent: ${req.headers["user-agent"]}`
   );
   try {
     const { data: videos }: { data: VideosApiResponse[] } = await axios.get(
-      `http://localhost:${PORT}/api/videos`,
+      `http://localhost:${PORT}/api/videos`
     );
 
     const html = `
@@ -56,9 +56,9 @@ router.get("/", async (req, res) => {
                               .join("")}
                         </div>
                     </div>
-                    <script src="js/events/searchEvent.js"></script>
-                    <script src="js/events/playEvent.js"></script>
-                    <script src="js/events/thumbnailEvent.js"></script>
+                    <script type="module" src="js/events/searchEvent.js"></script>
+                    <script type="module" src="js/events/playEvent.js"></script>
+                    <script type="module" src="js/events/thumbnailEvent.js"></script>
                 </body>
             </html>
         `;

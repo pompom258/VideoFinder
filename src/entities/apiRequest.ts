@@ -6,6 +6,12 @@ export interface ScanApiRequest extends Request {
   };
 }
 
+export interface SearchApiRequest extends Request {
+  query: {
+    keyword: string | undefined;
+  };
+}
+
 export interface PlayApiRequest extends Request {
   query: {
     videoId: string | undefined;
