@@ -5,16 +5,18 @@ import path from "path";
 import { DEFAULT_THUMBNAIL_IMGNAME } from "../config/constants.js";
 import { PORT } from "../config/env.js";
 import { VideosApiResponse } from "../entities/apiResponse.js";
+import { VideosViewRequest } from "../entities/viewRequest.js";
 
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+router.get("/", async (req: VideosViewRequest, res) => {
   console.log(
     `[${new Date().toISOString()}] [Videos View handler] ${req.method} '${req.url}' User-Agent: ${req.headers["user-agent"]}`
   );
   try {
+    const { keyword } = req.query;
     const { data: videos }: { data: VideosApiResponse[] } = await axios.get(
-      `http://localhost:${PORT}/api/videos`
+      `http://localhost:${PORT}/api/videos${keyword ? `?keyword=${keyword}` : ""}`
     );
 
     const html = `
