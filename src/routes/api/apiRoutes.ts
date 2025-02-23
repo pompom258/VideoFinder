@@ -16,6 +16,7 @@ import {
   ScanApiRequest,
   PlayApiRequest,
   GetGifApiRequest,
+  VideosApiRequest,
 } from "../../entities/apiRequest.js";
 import { ThumbnailStorage } from "../../model/storages/thumbnailStorage.js";
 import { VideosApiResponse } from "../../entities/apiResponse.js";
@@ -85,12 +86,18 @@ router.post("/scan", async (req: ScanApiRequest, res) => {
 /**
  * DBから動画情報の一覧を返却するAPI
  */
-router.get("/videos", async (req, res) => {
+router.get("/videos", async (req: VideosApiRequest, res) => {
   console.log(
     `[${new Date().toISOString()}] [Videos API Handler] ${req.method} '${req.url}' User-Agent: ${req.headers["user-agent"]}`
   );
   try {
-    const videos: VideosTableRecord[] = await videoStorage.getAll();
+    const { keyword } = req.query;
+
+    const videos: VideosTableRecord[] = keyword
+      ? (await videoStorage.getAll()).filter((video) =>
+          video.path.includes(keyword)
+        )
+      : await videoStorage.getAll();
     const thumbnails: ThumbnailsTableRecord[] = await thumbnailStorage.getAll();
 
     res.json(
@@ -111,42 +118,6 @@ router.get("/videos", async (req, res) => {
     );
   } catch (err) {
     console.error(`A fatal error occurred while executing Videos API: ${err}`);
-    res.status(500).json({ error: err });
-  }
-});
-
-/**
- * キーワードに基づいて動画を検索するAPI
- */
-router.get("/search", async (req, res) => {
-  console.log(
-    `[${new Date().toISOString()}] [Search API Handler] ${req.method} '${req.url}' User-Agent: ${req.headers["user-agent"]}`
-  );
-  try {
-    const { keyword } = req.query;
-    const videos: VideosTableRecord[] = await videoStorage.search(
-      keyword as string
-    );
-    const thumbnails: ThumbnailsTableRecord[] = await thumbnailStorage.getAll();
-
-    res.json(
-      videos.map((video: VideosTableRecord): VideosApiResponse => {
-        const thumbnail: ThumbnailsTableRecord | undefined = thumbnails.find(
-          (thumbnail) => thumbnail.id === video.id
-        );
-        return {
-          id: video.id,
-          videoName: path.basename(video.path),
-          videoPath: video.path,
-          thumbnailName: thumbnail ? path.basename(thumbnail.path) : "",
-          thumbnailPath: thumbnail?.path ?? "",
-          videoDuration: formatDuration(video.durationSeconds),
-          isThumbnailGenerationSucceed: thumbnail !== undefined,
-        };
-      })
-    );
-  } catch (err) {
-    console.error(`A fatal error occurred while executing Search API: ${err}`);
     res.status(500).json({ error: err });
   }
 });

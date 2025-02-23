@@ -20,13 +20,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function performSearch(keyword: string): void {
   const url = new URL(
-    `/api/search?keyword=${encodeURIComponent(keyword)}`,
+    `/api/videos?keyword=${encodeURIComponent(keyword)}`,
     document.baseURI
   );
   fetch(url.href)
     .then((response) => {
       if (!response.ok) {
-        throw new Error("Search API error");
+        throw new Error("videos API error");
       }
       return response.json();
     })

@@ -6,7 +6,7 @@ export interface ScanApiRequest extends Request {
   };
 }
 
-export interface SearchApiRequest extends Request {
+export interface VideosApiRequest extends Request {
   query: {
     keyword: string | undefined;
   };

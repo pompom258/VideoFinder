@@ -73,12 +73,6 @@ export class VideoStorage {
     });
   }
 
-  async search(keyword: string): Promise<VideosTableRecord[]> {
-    // 簡単な検索ロジックを実装（例：動画名にキーワードが含まれているか）
-    const allVideos = await this.getAll();
-    return allVideos.filter((video) => video.path.includes(keyword));
-  }
-
   public printAll() {
     this.db.each(
       `SELECT * FROM ${TABLE_NAME_VIDEOS}`,
