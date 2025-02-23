@@ -33,6 +33,7 @@ router.get("/", async (req: VideosViewRequest, res) => {
                         <div class="search-container">
                             <input type="text" id="search-input" placeholder="Search videos...">
                             <button id="search-button">Search</button>
+                            <button id="scan-button">Scan</button>
                         </div>
                         <div class="video-gallery">
                             ${videos
@@ -61,6 +62,7 @@ router.get("/", async (req: VideosViewRequest, res) => {
                     <script type="module" src="js/events/searchEvent.js"></script>
                     <script type="module" src="js/events/playEvent.js"></script>
                     <script type="module" src="js/events/thumbnailEvent.js"></script>
+                    <script type="module" src="js/events/scanEvent.js"></script>
                 </body>
             </html>
         `;

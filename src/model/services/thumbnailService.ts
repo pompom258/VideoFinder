@@ -4,7 +4,7 @@ import ffmpeg from "fluent-ffmpeg";
 import { THUMBNAIL_DIRECTORY, THUMBNAIL_SIZE } from "../../config/constants.js";
 
 /**
- * 動画のサムネイル画像を生成する。既に生成済みの場合は何もしない。
+ * 動画のサムネイル画像を生成する。
  * @param videoPath 動画ファイルのパス
  * @param destFileName 生成するサムネイル画像の名称
  * @returns サムネイル画像の絶対パス
@@ -17,14 +17,6 @@ export async function generateThumbnailFile(
 
   const outPath = path.join(THUMBNAIL_DIRECTORY, destFileName);
   return new Promise<string>((resolve, reject) => {
-    if (fs.existsSync(outPath)) {
-      console.log(
-        `Thumbnail for the video '${videoPath}' already exists, so generation is skipped.`
-      );
-      resolve(outPath);
-      return;
-    }
-
     console.log(`Generating thumbnail for the video '${videoPath}'...`);
     ffmpeg(videoPath)
       .screenshots({
@@ -50,7 +42,7 @@ export async function generateThumbnailFile(
 }
 
 /**
- * 動画のサムネイル(GIF)を生成する。既に生成済みの場合は何もしない。
+ * 動画のサムネイル(GIF)を生成する。
  * @param videoPath 動画ファイルのパス
  * @param destFileName 生成するサムネイル(GIF)の名称
  * @returns サムネイル(GIF)の絶対パス
@@ -63,14 +55,6 @@ export async function generateThumbnailGif(
 
   const outPath = path.join(THUMBNAIL_DIRECTORY, destFileName);
   return new Promise<string>((resolve, reject) => {
-    if (fs.existsSync(outPath)) {
-      console.log(
-        `Animation thumbnail for the video '${videoPath}' already exists, so generation is skipped.`
-      );
-      resolve(outPath);
-      return;
-    }
-
     console.log(
       `Generating animation thumbnail for the video '${videoPath}'...`
     );
