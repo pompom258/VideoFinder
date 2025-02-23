@@ -26,9 +26,10 @@ document.addEventListener("DOMContentLoaded", () => {
 function playAnimationThumbnail(videoId: string, thumbnail: Element): void {
   const url = new URL(`/api/getGif?videoId=${videoId}`, document.baseURI);
   fetch(url.href)
-    .then((response) => {
+    .then(async (response) => {
       if (!response.ok) {
-        throw new Error("getGIf API error");
+        const json = await response.json();
+        throw new Error(`getGIf API error (${json.error})`);
       }
 
       return response.blob();

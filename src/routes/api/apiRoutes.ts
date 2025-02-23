@@ -164,14 +164,13 @@ router.get("/getGif", async (req: GetGifApiRequest, res) => {
     let thumbnailPath: string | undefined = undefined;
     try {
       thumbnailPath = await generateThumbnailGif(path, `${videoId}.gif`);
+      res.sendFile(thumbnailPath);
     } catch (err) {
       console.error(err);
       res
         .status(500)
         .json({ error: "Failed to generate animation Thumbnail." });
     }
-
-    res.sendFile(thumbnailPath!);
   } catch (err) {
     console.error(`A fatal error occurred while executing GetGif API: ${err}`);
     res.status(500).json({ error: err });
