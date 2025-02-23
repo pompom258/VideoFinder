@@ -91,3 +91,22 @@ function ensureThumbnailFileNotExists(path: string) {
     fs.rmSync(path);
   }
 }
+
+/**
+ * すべてのサムネイルファイルを削除する。
+ */
+export async function cleanupThumbnailFiles(): Promise<void> {
+  return new Promise<void>((resolve, reject) => {
+    fs.rm(THUMBNAIL_DIRECTORY, { recursive: true }, (err) => {
+      if (err) {
+        console.error(
+          `An error occurred while cleaning up the thumbnail directory: ${err}`
+        );
+        reject(err);
+      } else {
+        console.log("Thumbnail directory cleanup completed.");
+        resolve();
+      }
+    });
+  });
+}

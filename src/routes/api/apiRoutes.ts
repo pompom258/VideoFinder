@@ -5,6 +5,7 @@ import { exec } from "child_process";
 import { VideoStorage } from "../../model/storages/videoStorage.js";
 import { findVideoFilesRecurse } from "../../model/utils/fileUtil.js";
 import {
+  cleanupThumbnailFiles,
   generateThumbnailFile,
   generateThumbnailGif,
 } from "../../model/services/thumbnailService.js";
@@ -41,6 +42,8 @@ router.post("/scan", async (req: ScanApiRequest, res) => {
 
     videoStorage.initialize();
     thumbnailStorage.initialize();
+
+    await cleanupThumbnailFiles();
 
     const videoFiles: string[] = dirPath
       ? findVideoFilesRecurse(dirPath)
