@@ -20,6 +20,7 @@ export const THUMBNAIL_DIRECTORY = path.join(
 );
 export const THUMBNAIL_SIZE = "768x432";
 export const DEFAULT_THUMBNAIL_IMGNAME = "thumbnail_default.png";
+export const ANIMATION_THUMBNAIL_GENERATION_INTERVAL_SEC = 300;
 
 export const TABLE_NAME_VIDEOS = "videos";
 export const TABLE_PATH_VIDEOS = "./videos.db";

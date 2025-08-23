@@ -25,6 +25,8 @@ import {
   VideosTableRecord,
   ThumbnailsTableRecord,
 } from "../../entities/table.js";
+import { indexToStartTime } from "../../model/utils/convertUtil.js";
+import { ANIMATION_THUMBNAIL_GENERATION_INTERVAL_SEC } from "../../config/constants.js";
 
 const router = express.Router();
 const videoStorage = new VideoStorage();
@@ -155,18 +157,25 @@ router.get("/play", async (req: PlayApiRequest, res) => {
 
 /**
  * IDに対応する動画のGIFサムネイルを生成して返却するAPI
+ * indexクエリで開始位置を指定可能（index=0→00:00:00, index=1→00:05:00, ...）
  */
 router.get("/getGif", async (req: GetGifApiRequest, res) => {
   console.log(
     `[${new Date().toISOString()}] [GetGif API Handler] ${req.method} '${req.url}' User-Agent: ${req.headers["user-agent"]}`
   );
   try {
-    const { videoId } = req.query;
+    const { videoId, index } = req.query;
     const { path } = await videoStorage.get(parseInt(videoId!));
+
+    // ANIMATION_THUMBNAIL_GENERATION_INTERVAL_SECで定義された秒数ごとに開始位置をずらす
+    const idx = index !== undefined ? parseInt(index as string) : 0;
+    const generationInterval = ANIMATION_THUMBNAIL_GENERATION_INTERVAL_SEC / 60;
+    const startTime = indexToStartTime(idx, generationInterval);
+    const gifFileName = `${videoId}_${idx}.gif`;
 
     let thumbnailPath: string | undefined = undefined;
     try {
-      thumbnailPath = await generateThumbnailGif(path, `${videoId}.gif`);
+      thumbnailPath = await generateThumbnailGif(path, gifFileName, startTime);
       res.sendFile(thumbnailPath);
     } catch (err) {
       console.error(err);

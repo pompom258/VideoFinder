@@ -21,5 +21,6 @@ export interface PlayApiRequest extends Request {
 export interface GetGifApiRequest extends Request {
   query: {
     videoId: string | undefined;
+    index?: string;
   };
 }
