@@ -45,21 +45,23 @@ export async function generateThumbnailFile(
  * 動画のサムネイル(GIF)を生成する。
  * @param videoPath 動画ファイルのパス
  * @param destFileName 生成するサムネイル(GIF)の名称
+ * @param startTime サムネイル生成開始位置(デフォルト: 00:00:00)
  * @returns サムネイル(GIF)の絶対パス
  */
 export async function generateThumbnailGif(
   videoPath: string,
-  destFileName: string
+  destFileName: string,
+  startTime: string = "00:00:00"
 ): Promise<string> {
   ensureThumbnailDirectoryExists();
 
   const outPath = path.join(THUMBNAIL_DIRECTORY, destFileName);
   return new Promise<string>((resolve, reject) => {
     console.log(
-      `Generating animation thumbnail for the video '${videoPath}'...`
+      `Generating animation thumbnail for the video '${videoPath}' from ${startTime}...`
     );
     ffmpeg(videoPath)
-      .setStartTime("00:00:00")
+      .setStartTime(startTime)
       .setDuration("3")
       .size(THUMBNAIL_SIZE)
       .fps(10)
