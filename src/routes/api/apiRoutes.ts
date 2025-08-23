@@ -98,7 +98,7 @@ router.get("/videos", async (req: VideosApiRequest, res) => {
 
     const videos: VideosTableRecord[] = keyword
       ? (await videoStorage.getAll()).filter((video) =>
-          video.path.includes(keyword)
+          video.path.toLowerCase().includes((keyword as string).toLowerCase())
         )
       : await videoStorage.getAll();
     const thumbnails: ThumbnailsTableRecord[] = await thumbnailStorage.getAll();
