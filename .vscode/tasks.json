@@ -25,7 +25,7 @@
             "label": "clean",
             "type": "shell",
             "command": [
-                "if (Test-Path ${workspaceFolder}/public/thumbnails) { Remove-Item ${workspaceFolder}/public/thumbnails -Recurse -Force }",
+                "if (Test-Path ${workspaceFolder}/public/thumbnails/*) { Remove-Item ${workspaceFolder}/public/thumbnails/* -Recurse -Force }",
                 "Get-ChildItem ${workspaceFolder}/sample/samplevideo_*.mp4 | Remove-Item -Force"
             ],
             "options": {
