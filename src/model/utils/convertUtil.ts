@@ -8,3 +8,19 @@ export function indexToStartTime(index: number, intervalMinutes: number = 5): st
   const seconds = String(startSeconds % 60).padStart(2, "0");
   return `${hours}:${minutes}:${seconds}`;
 }
+
+/**
+ * フルパスをpublicディレクトリからの相対パスに変換
+ * @param fullPath フルパス
+ * @returns publicディレクトリからの相対パス (例: /thumbnails/xxx.gif)
+ */
+export function fullPathToPublicPath(fullPath: string): string {
+  const publicDir = "public";
+  const normalizedPath = fullPath.replace(/\\/g, "/");
+  const publicDirNormalized = publicDir.replace(/\\/g, "/");
+  const idx = normalizedPath.indexOf(publicDirNormalized);
+  if (idx === -1) {
+    return normalizedPath;
+  }
+  return normalizedPath.substring(idx + publicDirNormalized.length).replace(/^\/+/, "/");
+}

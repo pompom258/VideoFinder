@@ -18,6 +18,7 @@ import {
   PlayApiRequest,
   GetGifApiRequest,
   VideosApiRequest,
+  GetGifsApiRequest,
 } from "../../entities/apiRequest.js";
 import { ThumbnailStorage } from "../../model/storages/thumbnailStorage.js";
 import { VideosApiResponse } from "../../entities/apiResponse.js";
@@ -25,7 +26,10 @@ import {
   VideosTableRecord,
   ThumbnailsTableRecord,
 } from "../../entities/table.js";
-import { indexToStartTime } from "../../model/utils/convertUtil.js";
+import {
+  fullPathToPublicPath,
+  indexToStartTime,
+} from "../../model/utils/convertUtil.js";
 import { ANIMATION_THUMBNAIL_GENERATION_INTERVAL_SEC } from "../../config/constants.js";
 
 const router = express.Router();
@@ -186,6 +190,53 @@ router.get("/getGif", async (req: GetGifApiRequest, res) => {
   } catch (err) {
     console.error(`A fatal error occurred while executing GetGif API: ${err}`);
     res.status(500).json({ error: err });
+  }
+});
+
+/**
+ * IDに対応する動画のGIFサムネイルを複数生成して返却するAPI
+ * SSE(Server-Sent Events)で逐次返却
+ * indexクエリで開始位置を指定可能（index=0→00:00:00, index=1→00:05:00, ...）
+ * countクエリで生成するGIFの数を指定可能（デフォルト3、最大10）
+ */
+router.get("/getGifs", async (req: GetGifsApiRequest, res) => {
+  console.log(
+    `[${new Date().toISOString()}] [GetGifs API Handler] ${req.method} '${req.url}' User-Agent: ${req.headers["user-agent"]}`
+  );
+
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+
+  const { videoId, index, count } = req.query;
+  const { path } = await videoStorage.get(parseInt(videoId!));
+
+  const jobs = [];
+  const startIdx = index !== undefined ? parseInt(index as string) : 0;
+  const gifCount =
+    count !== undefined ? Math.min(parseInt(count as string), 10) : 3;
+  const generationInterval = ANIMATION_THUMBNAIL_GENERATION_INTERVAL_SEC / 60;
+
+  for (let i = 0; i < gifCount; i++) {
+    const idx = startIdx + i;
+    const startTime = indexToStartTime(idx, generationInterval);
+    const gifFileName = `${videoId}_${idx}.gif`;
+    jobs.push({ name: gifFileName, start: startTime });
+  }
+
+  try {
+    for (const job of jobs) {
+      const outPath = await generateThumbnailGif(path, job.name, job.start);
+      res.write(
+        `data: ${JSON.stringify({ file: job.name, path: fullPathToPublicPath(outPath) })}\n\n`
+      );
+    }
+
+    res.write(`event: end\ndata: done\n\n`);
+    res.end();
+  } catch (err) {
+    res.write(`event: error\ndata: ${JSON.stringify(err)}\n\n`);
+    res.end();
   }
 });
 

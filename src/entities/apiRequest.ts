@@ -24,3 +24,11 @@ export interface GetGifApiRequest extends Request {
     index?: string;
   };
 }
+
+export interface GetGifsApiRequest extends Request {
+  query: {
+    videoId: string | undefined;
+    index?: string;
+    count?: string;
+  };
+}
