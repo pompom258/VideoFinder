@@ -1,0 +1,20 @@
+services:
+  app:
+    build: .
+    container_name: videofinder-app
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./videos.db:/app/videos.db
+      - ./thumbnails.db:/app/thumbnails.db
+      - ./tags.db:/app/tags.db
+      - ./video_tags.db:/app/video_tags.db
+      - ./sample:/app/sample
+      - ./public/thumbnails:/app/public/thumbnails
+      # In development we might want to map src and node_modules as well,
+      # but for a standard docker setup, we map persistent data.
+      # Create empty db files if they do not exist:
+      # touch videos.db thumbnails.db tags.db video_tags.db
+    environment:
+      - PORT=3000
+    restart: unless-stopped
