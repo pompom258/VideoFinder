@@ -5,7 +5,7 @@ import {
 } from "../../config/constants.js";
 import { ThumbnailsTableRecord } from "../../entities/table.js";
 
-export class ThumbnailStorage {
+export class ThumbnailRepository {
   private db = new sqlite3.Database(TABLE_PATH_THUMBNAILS);
 
   public initialize() {

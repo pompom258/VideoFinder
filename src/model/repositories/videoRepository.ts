@@ -5,7 +5,7 @@ import {
 } from "../../config/constants.js";
 import { VideosTableRecord } from "../../entities/table.js";
 
-export class VideoStorage {
+export class VideoRepository {
   private db = new sqlite3.Database(TABLE_PATH_VIDEOS);
 
   public initialize() {

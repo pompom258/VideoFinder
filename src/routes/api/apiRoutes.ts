@@ -2,7 +2,7 @@ import express from "express";
 import path from "path";
 import { exec } from "child_process";
 
-import { VideoStorage } from "../../model/storages/videoStorage.js";
+import { VideoRepository } from "../../model/repositories/videoRepository.js";
 import { findVideoFilesRecurse } from "../../model/utils/fileUtil.js";
 import {
   cleanupThumbnailFiles,
@@ -19,7 +19,7 @@ import {
   GetGifApiRequest,
   VideosApiRequest,
 } from "../../entities/apiRequest.js";
-import { ThumbnailStorage } from "../../model/storages/thumbnailStorage.js";
+import { ThumbnailRepository } from "../../model/repositories/thumbnailRepository.js";
 import { VideosApiResponse } from "../../entities/apiResponse.js";
 import {
   VideosTableRecord,
@@ -27,8 +27,8 @@ import {
 } from "../../entities/table.js";
 
 const router = express.Router();
-const videoStorage = new VideoStorage();
-const thumbnailStorage = new ThumbnailStorage();
+const videoRepository = new VideoRepository();
+const thumbnailRepository = new ThumbnailRepository();
 
 /**
  * ローカルマシンの動画ファイルをスキャンしてDBに格納するAPI
@@ -40,8 +40,8 @@ router.post("/scan", async (req: ScanApiRequest, res) => {
   try {
     const { dirPath } = req.body;
 
-    videoStorage.initialize();
-    thumbnailStorage.initialize();
+    videoRepository.initialize();
+    thumbnailRepository.initialize();
 
     await cleanupThumbnailFiles();
 
@@ -73,9 +73,9 @@ router.post("/scan", async (req: ScanApiRequest, res) => {
         );
       }
 
-      videoStorage.add(id, videoPath, videoDuration);
+      videoRepository.add(id, videoPath, videoDuration);
       if (thumbnailPath) {
-        thumbnailStorage.add(id, thumbnailPath);
+        thumbnailRepository.add(id, thumbnailPath);
       }
     }
 
@@ -97,11 +97,11 @@ router.get("/videos", async (req: VideosApiRequest, res) => {
     const { keyword } = req.query;
 
     const videos: VideosTableRecord[] = keyword
-      ? (await videoStorage.getAll()).filter((video) =>
+      ? (await videoRepository.getAll()).filter((video) =>
           video.path.toLowerCase().includes((keyword as string).toLowerCase())
         )
-      : await videoStorage.getAll();
-    const thumbnails: ThumbnailsTableRecord[] = await thumbnailStorage.getAll();
+      : await videoRepository.getAll();
+    const thumbnails: ThumbnailsTableRecord[] = await thumbnailRepository.getAll();
 
     res.json(
       videos.map((video: VideosTableRecord): VideosApiResponse => {
@@ -134,7 +134,7 @@ router.get("/play", async (req: PlayApiRequest, res) => {
   );
   try {
     const { videoId } = req.query;
-    const { path } = await videoStorage.get(parseInt(videoId!));
+    const { path } = await videoRepository.get(parseInt(videoId!));
 
     const command: string = `start "" "${path}"`;
     exec(command, (err) => {
@@ -162,7 +162,7 @@ router.get("/getGif", async (req: GetGifApiRequest, res) => {
   );
   try {
     const { videoId } = req.query;
-    const { path } = await videoStorage.get(parseInt(videoId!));
+    const { path } = await videoRepository.get(parseInt(videoId!));
 
     let thumbnailPath: string | undefined = undefined;
     try {
