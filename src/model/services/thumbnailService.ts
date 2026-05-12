@@ -97,6 +97,11 @@ function ensureThumbnailFileNotExists(path: string) {
  */
 export async function cleanupThumbnailFiles(): Promise<void> {
   return new Promise<void>((resolve, reject) => {
+    if (!fs.existsSync(THUMBNAIL_DIRECTORY)) {
+      resolve();
+      return;
+    }
+
     fs.rm(THUMBNAIL_DIRECTORY, { recursive: true }, (err) => {
       if (err) {
         console.error(
