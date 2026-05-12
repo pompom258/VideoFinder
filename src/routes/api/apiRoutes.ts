@@ -3,7 +3,7 @@ import path from "path";
 import { exec } from "child_process";
 
 import { VideoRepository } from "../../model/repositories/videoRepository.js";
-import { findVideoFilesRecurse } from "../../model/utils/fileUtil.js";
+import { findAllVideoFiles, findVideoFilesRecurse } from "../../model/utils/fileUtil.js";
 import {
   cleanupThumbnailFiles,
   generateThumbnailFile,
@@ -47,7 +47,7 @@ router.post("/scan", async (req: ScanApiRequest, res) => {
 
     const videoFiles: string[] = dirPath
       ? findVideoFilesRecurse(dirPath)
-      : findVideoFilesRecurse();
+      : findAllVideoFiles();
 
     for (let i = 0; i < videoFiles.length; i++) {
       const videoPath: string = videoFiles[i];
